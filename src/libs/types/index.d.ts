@@ -24,9 +24,12 @@ export interface TilesConstructor<Tile> {
   ): TilesInterface<Tile>;
 }
 
-export interface OpenableTilesConstructor extends TilesConstructor<OpenableTile> {}
+export interface OpenableTilesConstructor 
+  extends TilesConstructor<OpenableTile> {}
 
-export interface OpenableTilesInterface extends TilesInterface<OpenableTile> {
+export interface OpenableTilesInterface
+  extends TilesInterface<OpenableTile>
+{
   tilesIds: TileId[];
 
   toggleTile(id: TileId): void;
