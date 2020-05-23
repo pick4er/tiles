@@ -55,7 +55,9 @@ const mapStateToProps = (state: RootState) => ({
   values: selectIdsToValues(state),
   tiles: selectTwoDimensionalTiles(state),
 })
-const mapDispatchToProps = (dispatch: ThunkDispatch<RootState, void, Action>) => ({
+const mapDispatchToProps = (
+  dispatch: ThunkDispatch<RootState, void, Action>
+) => ({
   toggleTile: (id: TileId) => 
     dispatch(toggleTileAction(id)),
 })

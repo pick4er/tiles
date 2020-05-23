@@ -78,27 +78,30 @@ const selectFieldModule = (state: RootState) => state.field
 
 export const selectWidth = createSelector(
   selectFieldModule,
-  ({ width }) => width
+  ({ width }): number | undefined => width
 )
 
 export const selectHeight = createSelector(
   selectFieldModule,
-  ({ height }) => height
+  ({ height }): number | undefined => height
 )
 
 export const selectIsMatch = createSelector(
   selectFieldModule,
-  ({ isMatch }) => isMatch
+  ({ isMatch }): boolean | undefined => isMatch
 )
 
 export const selectTiles = createSelector(
   selectFieldModule,
-  ({ tiles }) => tiles
+  ({ tiles }): OpenableTile[] | undefined => tiles
 )
 
 export const selectTilesIds = createSelector(
   selectTiles,
-  ({ tiles }): TileId[] => tiles.map(({ id }: OpenableTile) => id)
+  (tiles): TileId[] | undefined => 
+    typeof tiles === 'undefined'
+      ? []
+      : tiles.map(({ id }: OpenableTile) => id)
 )
 
 export const selectTwoDimensionalTiles = createSelector(
@@ -107,6 +110,14 @@ export const selectTwoDimensionalTiles = createSelector(
   selectHeight,
   (tiles, width, height): (OpenableTile[])[] => {
     const twoDimensionalTiles: (OpenableTile[])[] = [];
+
+    if (
+      typeof width === 'undefined' ||
+      typeof height === 'undefined' ||
+      typeof tiles === 'undefined'
+    ) {
+      return twoDimensionalTiles
+    }
 
     for (let h = 0; h < height; h++) {
       const rowTiles: OpenableTile[] = [];
@@ -124,7 +135,7 @@ export const selectTwoDimensionalTiles = createSelector(
 
 export const selectValues = createSelector(
   selectFieldModule,
-  ({ values }) => values
+  ({ values }): string[] => values
 )
 
 export const selectValuesToIds = createSelector(
@@ -132,6 +143,10 @@ export const selectValuesToIds = createSelector(
   selectValues,
   (tilesIds, values): Record<TileValue, TileId[]> => {
     const valuesToIds: Record<TileValue, TileId[]> = {}
+
+    if (typeof tilesIds === 'undefined') {
+      return valuesToIds
+    }
 
     let valueId = 0;
     let identifierId = 0;
@@ -228,6 +243,13 @@ export const initTiles: ActionCreator<
   const width = selectWidth(state)
   const height = selectHeight(state)
 
+  if (
+    typeof width === 'undefined' ||
+    typeof height === 'undefined'
+  ) {
+    throw new TypeError('Specify field dimensions first')
+  }
+
   const tiles: OpenableTile[] = []
   for (let id = 0; id < width * height; id++) {
     tiles.push({ id, isOpen: false })
@@ -304,5 +326,7 @@ export const areValuesMatch: ActionCreator<
 export const initField: ActionCreator<
   ThunkAction<void, RootState, void, PayloadAction>
 > = () => dispatch => {
+  dispatch(setHeight(4))
+  dispatch(setWidth(4))
   dispatch(initTiles())
 }
