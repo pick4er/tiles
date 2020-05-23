@@ -1,9 +1,4 @@
-import type {
-  OpenableTile,
-  TileValue,
-  TileId,
-} from 'types';
-import type { RootState } from 'flux';
+import type { RootState } from 'flux/types';
 
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';

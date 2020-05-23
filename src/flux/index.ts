@@ -8,9 +8,7 @@ import thunk from 'redux-thunk';
 import game from 'flux/modules/game';
 import field from 'flux/modules/field';
 
-const rootReducer = combineReducers({ game, field })
-
-export type RootState = ReturnType<typeof rootReducer>
+export const rootReducer = combineReducers({ game, field })
 export default createStore(
   rootReducer,
   applyMiddleware(thunk)
