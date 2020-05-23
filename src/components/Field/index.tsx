@@ -3,15 +3,15 @@ import type {
   OpenableTile,
   TileValue,
   TileId
-} from 'libs/types'
+} from 'types'
 
 import React from 'react';
 import { connect } from 'react-redux';
 import Tile from 'components/Tile';
 import {
-  selectTwoDimensionalTiles,
   selectIdsToValues,
-  toggleTile as toggleTileAction,
+  selectTwoDimensionalTiles,
+  toggleTile as toggleTileAction
 } from 'flux/modules/field';
 
 interface Props {
