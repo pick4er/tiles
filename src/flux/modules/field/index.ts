@@ -102,7 +102,7 @@ export const selectTilesIds = createSelector(
 export const selectTwoDimensionalTiles = createSelector(
   selectTiles,
   selectWidth,
-  selectHeight
+  selectHeight,
   (tiles, width, height): (OpenableTile[])[] => {
     const twoDimensionalTiles: (OpenableTile[])[] = [];
 

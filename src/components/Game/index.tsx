@@ -9,27 +9,15 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 
 import Field from 'components/Field';
-import {
-  initField,
-  selectTiles,
-  selectValues,
-} from 'flux/modules/field';
+import { initField } from 'flux/modules/field';
 
 interface Props {
   round: number;
   initField(): void;
-  tiles?: (OpenableTile[])[];
-  values?: Record<TileId, TileValue>;
 }
 
 function Game(props: Props) {
-  const { round, initField, tiles, values } = props;
-
-  useEffect(() => {
-    const newTiles = tiles;
-    const newValues = values;
-    debugger
-  }, [tiles, values])
+  const { round, initField } = props;
 
   useEffect(() => {
     debugger
@@ -44,10 +32,7 @@ function Game(props: Props) {
   )
 }
 
-const mapStateToProps = (state: RootState) => ({
-  tiles: selectTiles(state),
-  values: selectValues(state)
-})
+const mapStateToProps = (state: RootState) => ({})
 
 const mapDispatchToProps = {
   initField
