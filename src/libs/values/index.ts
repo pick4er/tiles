@@ -21,22 +21,24 @@ class TilesValues implements TilesValuesInterface {
     let valueId = 0;
 
     while (identifierId < this.ids.length) {
-      const valueName = this.values[valueId]
+      const value = this.values[valueId]
       const firstIdentifier = this.ids[identifierId]
-      const secondIdentifier = this.ids[identifierId++]
+      const secondIdentifier = this.ids[identifierId + 1]
 
-      if (!this.valuesToIds[valueName]) {
-        this.valuesToIds[valueName] = []
+      if (!this.valuesToIds[value]) {
+        this.valuesToIds[value] = []
       }
 
+      // out of ids range
       if (typeof secondIdentifier === 'undefined') {
-        this.valuesToIds[this.values[0]] =
-          this.valuesToIds[this.values[0]].concat(
+        // identifier must have a value couple
+        this.valuesToIds[value] =
+          this.valuesToIds[value].concat(
             firstIdentifier
           )
       } else {
-        this.valuesToIds[valueName] =
-          this.valuesToIds[valueName].concat([
+        this.valuesToIds[value] =
+          this.valuesToIds[value].concat([
             firstIdentifier, secondIdentifier
           ])
       }
@@ -45,14 +47,16 @@ class TilesValues implements TilesValuesInterface {
       if (valueId === this.values.length) {
         valueId = 0;
       }
+
+      identifierId += 2; // two symbols at least
     }
   }
 
   get idsToValues(): Record<TileId, TileValue> {
     const idsToValues: Record<TileId, TileValue> = {}
 
-    for (let value in Object.keys(this.valuesToIds)) {
-      for (let identifier in this.valuesToIds[value]) {
+    for (let value of Object.keys(this.valuesToIds)) {
+      for (let identifier of this.valuesToIds[value]) {
         idsToValues[identifier] = value as TileValue
       }
     }
@@ -61,13 +65,13 @@ class TilesValues implements TilesValuesInterface {
   }
 
   isMatch(ids?: TileId[]): boolean | undefined {
-    if (!ids!.length) {
+    if (typeof ids === 'undefined') {
       return undefined
     }
 
     let currentValue: TileValue = ''
-    for (let id in Object.keys(this.idsToValues)) {
-      const value = this.idsToValues[id]
+    for (let identifier of ids) {
+      const value = this.idsToValues[identifier]
 
       if (!currentValue) {
         currentValue = value
