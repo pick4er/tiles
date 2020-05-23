@@ -2,7 +2,6 @@ import type { RootState } from 'flux/types';
 
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-
 import Field from 'components/Field';
 import { initField } from 'flux/modules/field';
 
@@ -19,10 +18,7 @@ function Game(props: Props) {
   }, [initField])
 
   return (
-    <div>
-      <h3>Round { round }</h3>
-      <Field />
-    </div>
+    <Field />
   )
 }
 

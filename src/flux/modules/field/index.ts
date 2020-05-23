@@ -1,17 +1,17 @@
 import type { RootState } from 'flux/types';
 import type {
   OpenableTilesInterface,
-  TilesValuesInterface
+  TilesValuesInterface,
+  TileId,
 } from 'libs/types';
 
 import { createSelector } from 'reselect';
-
 import { OpenableTiles } from 'libs/tiles';
 import { TilesValues, defaultValues } from 'libs/values';
 
 interface State {
   tiles?: OpenableTilesInterface;
-  values?: TilesValuesInterface;
+  tilesValues?: TilesValuesInterface;
 }
 
 interface Action {
@@ -20,11 +20,12 @@ interface Action {
 }
 
 // Actions
-const INIT = 'FIELD/INIT'
+const SET_TILES = 'FIELD/SET_TILES'
+const SET_TILES_VALUES = 'FIELD/SET_TILES_VALUES'
 
 const initialState: State = {
   tiles: undefined,
-  values: undefined,
+  tilesValues: undefined,
 }
 
 // Reducer
@@ -33,28 +34,18 @@ export default function reducer(
   { type, payload }: Action
 ) {
   switch (type) {
-    case INIT:
+    case SET_TILES:
       return {
-        ...initialState,
-        tiles: payload.tiles,
-        values: payload.values,
+        ...state,
+        tiles: payload.tiles
+      }
+    case SET_TILES_VALUES:
+      return {
+        ...state,
+        tilesValues: payload.tilesValues
       }
     default:
       return state
-  }
-}
-
-// Action creators
-export function initField(): Action {
-  const tiles = new OpenableTiles(4, 4)
-  const values = new TilesValues(
-    tiles.tilesIds,
-    defaultValues
-  )
-
-  return {
-    type: INIT,
-    payload: { tiles, values }
   }
 }
 
@@ -63,10 +54,50 @@ const selectFieldModule = (state: RootState) => state.field
 
 export const selectTiles = createSelector(
   selectFieldModule,
-  ({ tiles }) => tiles.twoDimensionalTiles
+  ({ tiles }) => tiles
 )
 
-export const selectValues = createSelector(
-  selectFieldModule,
-  ({ values }) => values.idsToValues
+export const selectTwoDimensionalTiles = createSelector(
+  selectTiles,
+  tiles => tiles.twoDimensionalTiles
 )
+
+export const selectIdsToValues = createSelector(
+  selectFieldModule,
+  ({ tilesValues }) => tilesValues.idsToValues
+)
+
+// Action creators
+export const setTiles = (
+  payload: OpenableTilesInterface
+): Action => ({
+  type: SET_TILES,
+  payload,
+})
+
+export const setTilesValues = (
+  payload: TilesValuesInterface
+): Action => ({
+  type: SET_TILES_VALUES,
+  payload
+})
+
+// Middleware
+export const initField = () => dispatch => {
+  const tiles = new OpenableTiles(4, 4)
+  const values = new TilesValues(
+    tiles.tilesIds,
+    defaultValues
+  )
+
+  dispatch(setTiles(tiles))
+  dispatch(setTilesValues(values))
+}
+
+export const toggleTile = (id: TileId) => (
+  dispatch,
+  getState
+) => {
+  const tiles = selectTiles(getState())
+  tiles.toggleTile
+}

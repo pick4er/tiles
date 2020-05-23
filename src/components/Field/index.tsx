@@ -1,3 +1,4 @@
+import type { RootState } from 'flux/types';
 import type {
   OpenableTile,
   TileValue,
@@ -6,20 +7,24 @@ import type {
 
 import React from 'react';
 import { connect } from 'react-redux';
-
 import Tile from 'components/Tile';
+import {
+  selectTwoDimensionalTiles,
+  selectIdsToValues,
+  toggleTile as toggleTileAction,
+} from 'flux/modules/field';
 
 interface Props {
-  tiles?: (OpenableTile[])[];
-  values?: Record<TileId, TileValue>;
-  toggleTile?: (id: TileId) => void;
+  tiles: (OpenableTile[])[];
+  values: Record<TileId, TileValue>;
+  toggleTile: (id: TileId) => void;
 }
 
 function Field(props: Props) {
   const {
-    tiles = [],
-    values = {},
-    toggleTile = () => {},
+    tiles,
+    values,
+    toggleTile,
   } = props
 
   return (
@@ -44,8 +49,13 @@ function Field(props: Props) {
   )
 }
 
-const mapStateToProps = () => ({})
-const mapDispatchToProps = {}
+const mapStateToProps = (state: RootState) => ({
+  values: selectIdsToValues(state),
+  tiles: selectTwoDimensionalTiles(state),
+})
+const mapDispatchToProps = dispatch => ({
+  toggleTile: (id: TileId) => dispatch(toggleTileAction(id)),
+})
 
 export default connect(
   mapStateToProps,
