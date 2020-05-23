@@ -17,15 +17,17 @@ export interface TilesInterface<Tile> {
   mix(): void;
 }
 
-export interface TilesConstructor<Tile> {
+export interface TilesConstructor<
+  Interface extends TilesInterface<any>
+> {
   new (
     width: number,
     height: number
-  ): TilesInterface<Tile>;
+  ): Interface;
 }
 
-export interface OpenableTilesConstructor 
-  extends TilesConstructor<OpenableTile> {}
+export interface OpenableTilesConstructor
+  extends TilesConstructor<OpenableTilesInterface> {}
 
 export interface OpenableTilesInterface
   extends TilesInterface<OpenableTile>

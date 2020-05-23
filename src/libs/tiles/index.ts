@@ -36,7 +36,7 @@ class OpenableTiles implements OpenableTilesInterface {
       const rowTiles: OpenableTile[] = [];
 
       for (let w = 0; w < this.width; w++) {
-        rowTiles.push(this.tiles[w * h])
+        rowTiles.push(this.tiles[w + (h * this.width)])
       }
 
       twoDimensionalTiles.push(rowTiles)
@@ -58,7 +58,7 @@ class OpenableTiles implements OpenableTilesInterface {
   }
 
   mix(): void {
-    for (let i = this.tiles.length - 1; i < 0; i--) {
+    for (let i = this.tiles.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1)) as number
       [this.tiles[i], this.tiles[j]] = [this.tiles[j], this.tiles[i]]
     }
