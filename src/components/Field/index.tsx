@@ -1,27 +1,39 @@
+import type { ThunkDispatch } from 'redux-thunk';
+import type { RootState } from 'flux/types';
+import type { Action } from 'redux';
 import type {
   OpenableTile,
   TileValue,
   TileId
-} from 'libs/types'
+} from 'types'
 
 import React from 'react';
+import { connect } from 'react-redux';
+
 import Tile from 'components/Tile';
+import {
+  selectIdsToValues,
+  selectTwoDimensionalTiles,
+  toggleTile as toggleTileAction
+} from 'flux/modules/field';
+
+import styles from './index.module.scss'
 
 interface Props {
-  tiles?: (OpenableTile[])[];
-  values?: Record<TileId, TileValue>;
-  toggleTile?: (id: TileId) => void;
+  tiles: (OpenableTile[])[];
+  values: Record<TileId, TileValue>;
+  toggleTile: (id: TileId) => void;
 }
 
-export default function Field(props: Props) {
+function Field(props: Props) {
   const {
-    tiles = [],
-    values = {},
-    toggleTile = () => {},
+    tiles,
+    values,
+    toggleTile,
   } = props
 
   return (
-    <div>
+    <div className={styles.field}>
       {tiles.map((tilesRow, row) =>
         tilesRow.map(({ id, isOpen }, column) =>
           <Tile
@@ -30,8 +42,9 @@ export default function Field(props: Props) {
             isOpen={isOpen}
             onClick={toggleTile}
             style={{
-              gridRow: row,
-              gridColumn: column
+              // indexing from 0, grid from 1
+              gridRow: row + 1,
+              gridColumn: column + 1
             }}
           >
             <div className={values[id] as TileValue} />
@@ -41,3 +54,19 @@ export default function Field(props: Props) {
     </div>
   )
 }
+
+const mapStateToProps = (state: RootState) => ({
+  values: selectIdsToValues(state),
+  tiles: selectTwoDimensionalTiles(state),
+})
+const mapDispatchToProps = (
+  dispatch: ThunkDispatch<RootState, void, Action>
+) => ({
+  toggleTile: (id: TileId) => 
+    dispatch(toggleTileAction(id)),
+})
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Field)

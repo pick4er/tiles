@@ -1,17 +1,34 @@
-import React from 'react';
+import type { RootState } from 'flux/types';
+
+import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
 import Field from 'components/Field';
+import { initField } from 'flux/modules/field';
 
 interface Props {
-  round: number;
+  round?: number;
+  initField(): void;
 }
 
-export default function Game(props: Props) {
-  const { round } = props;
+function Game(props: Props) {
+  const { initField } = props;
+
+  useEffect(() => {
+    initField()
+  }, [initField])
 
   return (
-    <div>
-      <h3>Round { round }</h3>
-      <Field />
-    </div>
+    <Field />
   )
 }
+
+const mapStateToProps = (state: RootState) => ({})
+
+const mapDispatchToProps = {
+  initField
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Game)

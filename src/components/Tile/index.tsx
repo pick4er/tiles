@@ -1,5 +1,5 @@
 import type { ReactNode, CSSProperties } from 'react';
-import type { TileId } from 'libs/types';
+import type { TileId } from 'types';
 
 import React from 'react';
 import cx from 'classnames';
@@ -30,6 +30,7 @@ export default function Tile(props: Props) {
     <button
       type="button"
       style={style}
+      className={classNames}
       onClick={() => onClick(id)}
     >
       {isOpen && children}
