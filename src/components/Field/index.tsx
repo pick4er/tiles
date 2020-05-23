@@ -9,12 +9,15 @@ import type {
 
 import React from 'react';
 import { connect } from 'react-redux';
+
 import Tile from 'components/Tile';
 import {
   selectIdsToValues,
   selectTwoDimensionalTiles,
   toggleTile as toggleTileAction
 } from 'flux/modules/field';
+
+import styles from './index.module.scss'
 
 interface Props {
   tiles: (OpenableTile[])[];
@@ -30,7 +33,7 @@ function Field(props: Props) {
   } = props
 
   return (
-    <div>
+    <div className={styles.field}>
       {tiles.map((tilesRow, row) =>
         tilesRow.map(({ id, isOpen }, column) =>
           <Tile
@@ -39,8 +42,9 @@ function Field(props: Props) {
             isOpen={isOpen}
             onClick={toggleTile}
             style={{
-              gridRow: row,
-              gridColumn: column
+              // indexing from 0, grid from 1
+              gridRow: row + 1,
+              gridColumn: column + 1
             }}
           >
             <div className={values[id] as TileValue} />
