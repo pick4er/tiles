@@ -7,7 +7,7 @@ import Field from 'components/Field';
 import { initField } from 'flux/modules/field';
 
 interface Props {
-  round: number;
+  round?: number;
   initField(): void;
 }
 
@@ -15,9 +15,8 @@ function Game(props: Props) {
   const { round, initField } = props;
 
   useEffect(() => {
-    debugger
     initField()
-  }, [])
+  }, [initField])
 
   return (
     <div>

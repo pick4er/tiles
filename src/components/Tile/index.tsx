@@ -30,6 +30,7 @@ export default function Tile(props: Props) {
     <button
       type="button"
       style={style}
+      className={classNames}
       onClick={() => onClick(id)}
     >
       {isOpen && children}

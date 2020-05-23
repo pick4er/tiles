@@ -34,7 +34,6 @@ export default function reducer(
 ) {
   switch (type) {
     case INIT:
-      debugger
       return {
         ...initialState,
         tiles: payload.tiles,
@@ -52,7 +51,6 @@ export function initField(): Action {
     tiles.tilesIds,
     defaultValues
   )
-  debugger
 
   return {
     type: INIT,

@@ -44,7 +44,7 @@ function Field(props: Props) {
   )
 }
 
-const mapStateToProps = () => {}
+const mapStateToProps = () => ({})
 const mapDispatchToProps = {}
 
 export default connect(
