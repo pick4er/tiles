@@ -5,6 +5,8 @@ import type {
 } from 'libs/types'
 
 import React from 'react';
+import { connect } from 'react-redux';
+
 import Tile from 'components/Tile';
 
 interface Props {
@@ -13,7 +15,7 @@ interface Props {
   toggleTile?: (id: TileId) => void;
 }
 
-export default function Field(props: Props) {
+function Field(props: Props) {
   const {
     tiles = [],
     values = {},
@@ -41,3 +43,11 @@ export default function Field(props: Props) {
     </div>
   )
 }
+
+const mapStateToProps = () => {}
+const mapDispatchToProps = {}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Field)

@@ -1,11 +1,13 @@
 import React from 'react';
+import { connect } from 'react-redux';
+
 import Field from 'components/Field';
 
 interface Props {
   round: number;
 }
 
-export default function Game(props: Props) {
+function Game(props: Props) {
   const { round } = props;
 
   return (
@@ -15,3 +17,11 @@ export default function Game(props: Props) {
     </div>
   )
 }
+
+const mapStateToProps = () => {}
+const mapDispatchToProps = {}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Game)
