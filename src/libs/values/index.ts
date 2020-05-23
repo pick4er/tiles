@@ -30,8 +30,8 @@ class TilesValues implements TilesValuesInterface {
       }
 
       if (typeof secondIdentifier === 'undefined') {
-        this.valuesToIds[values[0]] =
-          this.valuesToIds[values[0]].concat(
+        this.valuesToIds[this.values[0]] =
+          this.valuesToIds[this.values[0]].concat(
             firstIdentifier
           )
       } else {
@@ -65,12 +65,12 @@ class TilesValues implements TilesValuesInterface {
       return undefined
     }
 
-    let currentValue = ''
+    let currentValue: TileValue = ''
     for (let id in Object.keys(this.idsToValues)) {
-      const idValue = this.idsToValues[id]
+      const value = this.idsToValues[id]
 
       if (!currentValue) {
-        currentValue = idValue
+        currentValue = value
       } else if (value === currentValue) {
         continue
       } else {
