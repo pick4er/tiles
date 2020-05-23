@@ -1,4 +1,6 @@
+import type { ThunkDispatch } from 'redux-thunk';
 import type { RootState } from 'flux/types';
+import type { Action } from 'redux';
 import type {
   OpenableTile,
   TileValue,
@@ -53,8 +55,9 @@ const mapStateToProps = (state: RootState) => ({
   values: selectIdsToValues(state),
   tiles: selectTwoDimensionalTiles(state),
 })
-const mapDispatchToProps = dispatch => ({
-  toggleTile: (id: TileId) => dispatch(toggleTileAction(id)),
+const mapDispatchToProps = (dispatch: ThunkDispatch<RootState, void, Action>) => ({
+  toggleTile: (id: TileId) => 
+    dispatch(toggleTileAction(id)),
 })
 
 export default connect(

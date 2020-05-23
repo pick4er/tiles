@@ -1,3 +1,5 @@
+import type { ActionCreator, Action } from 'redux';
+import type { ThunkAction } from 'redux-thunk';
 import type { RootState } from 'flux/types';
 import type {
   OpenableTile,
@@ -15,8 +17,7 @@ interface State {
   isMatch?: boolean;
 }
 
-interface Action {
-  type: string;
+interface PayloadAction extends Action<string> {
   payload?: any;
 }
 
@@ -39,7 +40,7 @@ const initialState: State = {
 // Reducer
 export default function reducer(
   state: State = initialState,
-  { type, payload }: Action
+  { type, payload }: PayloadAction
 ) {
   switch (type) {
     case SET_TILES:
@@ -97,7 +98,7 @@ export const selectTiles = createSelector(
 
 export const selectTilesIds = createSelector(
   selectTiles,
-  ({ tiles }): TileId[] => tiles.map(({ id }) => id)
+  ({ tiles }): TileId[] => tiles.map(({ id }: OpenableTile) => id)
 )
 
 export const selectTwoDimensionalTiles = createSelector(
@@ -183,37 +184,46 @@ export const selectIdsToValues = createSelector(
 )
 
 // Action creators
-export const setTiles = (payload: OpenableTile[]) => ({
+export const setTiles = (
+  payload: OpenableTile[]
+): PayloadAction => ({
   type: SET_TILES,
   payload
 })
 
 export const setIsMatch = (
   payload: boolean | undefined
-) => ({
+): PayloadAction => ({
   type: SET_IS_MATCH,
   payload
 })
 
 export const setValues = (
   payload: Record<TileValue, TileId[]>
-) => ({
+): PayloadAction => ({
   type: SET_VALUES,
   payload
 })
 
-export const setWidth = (payload: number) => ({
+export const setWidth = (
+  payload: number
+): PayloadAction => ({
   type: SET_WIDTH,
   payload
 })
 
-export const setHeight = (payload: number) => ({
+export const setHeight = (
+  payload: number
+): PayloadAction => ({
   type: SET_HEIGHT,
   payload
 })
 
 // Middleware
-export const initTiles = () => (dispatch, getState) => {
+export const initTiles: ActionCreator<
+  // types: return, root state, extra args, action
+  ThunkAction<void, RootState, void, PayloadAction>
+> = () => (dispatch, getState) => {
   const state: RootState = getState()
   const width = selectWidth(state)
   const height = selectHeight(state)
@@ -223,10 +233,12 @@ export const initTiles = () => (dispatch, getState) => {
     tiles.push({ id, isOpen: false })
   }
 
-  dispatch(setTiles(tiles))
+  dispatch<PayloadAction>(setTiles(tiles))
 }
 
-export const mixTiles = () => (dispatch, getState) => {
+export const mixTiles: ActionCreator<
+  ThunkAction<void, RootState, void, PayloadAction>
+> = () => (dispatch, getState) => {
   const tiles: OpenableTile[] =
     JSON.parse(JSON.stringify(selectTiles(getState())))
 
@@ -242,14 +254,16 @@ export const mixTiles = () => (dispatch, getState) => {
   dispatch(setTiles(tiles))
 }
 
-export const toggleTile = (tileId: TileId) => (
+export const toggleTile: ActionCreator<
+  ThunkAction<void, RootState, void, PayloadAction>
+> = (tileId: TileId) => (
   dispatch,
   getState
 ) => {
   const tiles: OpenableTile[] =
     JSON.parse(JSON.stringify(selectTiles(getState())))
 
-  const tile = tiles.find(({ id: _id }) => _id === id)
+  const tile = tiles.find(({ id }) => id === tileId)
   if (!tile) {
     throw new TypeError('No tile matches provided id')
   }
@@ -259,10 +273,9 @@ export const toggleTile = (tileId: TileId) => (
   dispatch(setTiles(tiles))
 }
 
-export const areValuesMatch = (ids?: TileId[]) => (
-  dispatch,
-  getState
-) => {
+export const areValuesMatch: ActionCreator<
+  ThunkAction<void, RootState, void, PayloadAction>
+> = (ids?: TileId[]) => (dispatch, getState) => {
   const idsToValues = selectIdsToValues(getState())
 
   if (typeof ids === 'undefined') {
@@ -288,6 +301,8 @@ export const areValuesMatch = (ids?: TileId[]) => (
   return
 }
 
-export const initField = () => dispatch => {
+export const initField: ActionCreator<
+  ThunkAction<void, RootState, void, PayloadAction>
+> = () => dispatch => {
   dispatch(initTiles())
 }

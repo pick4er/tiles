@@ -11,7 +11,7 @@ interface Props {
 }
 
 function Game(props: Props) {
-  const { round, initField } = props;
+  const { initField } = props;
 
   useEffect(() => {
     initField()
