@@ -1,6 +1,6 @@
 
 export type TileId = string | number;
-export type TileValue = string | number;
+export type TileValue = string;
 
 export interface BaseTile {
   id: TileId;
@@ -36,7 +36,6 @@ export interface OpenableTilesInterface
 
   toggleTile(id: TileId): void;
 }
-
 
 export interface TilesValuesInterface {
   idsToValues: Record<TileId, TileValue>;

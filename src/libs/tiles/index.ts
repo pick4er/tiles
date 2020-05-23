@@ -3,7 +3,7 @@ import type {
   OpenableTilesInterface,
   OpenableTile,
   TileId
-} from '../types';
+} from 'libs/types';
 
 export const OpenableTiles: OpenableTilesConstructor =
 class OpenableTiles implements OpenableTilesInterface {
@@ -59,8 +59,12 @@ class OpenableTiles implements OpenableTilesInterface {
 
   mix(): void {
     for (let i = this.tiles.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1)) as number
-      [this.tiles[i], this.tiles[j]] = [this.tiles[j], this.tiles[i]]
+      const j = Math.floor(
+        Math.random() * (i + 1)
+      ) as number
+
+      [this.tiles[i], this.tiles[j]] =
+        [this.tiles[j], this.tiles[i]]
     }
   }
 }

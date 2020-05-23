@@ -3,7 +3,7 @@ import type {
   TilesValuesInterface,
   TileValue,
   TileId
-} from '../types';
+} from 'libs/types';
 
 export const TilesValues: TilesValuesConstructor =
 class TilesValues implements TilesValuesInterface {
