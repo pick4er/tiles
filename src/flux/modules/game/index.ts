@@ -1,5 +1,7 @@
 
-interface State {}
+interface State {
+  round: number;
+}
 
 interface Action {
   type: string;
@@ -7,24 +9,32 @@ interface Action {
 }
 
 // Actions
-const INIT = 'GAME/INIT'
+const SET_ROUND = 'GAME/SET_ROUND'
 
-const initialState: State = {}
+const initialState: State = {
+  round: 1,
+}
 
 // Reducer
 export default function reducer(
   state: State = initialState,
-  action: Action
+  { type, payload }: Action
 ) {
-  switch (action.type) {
-    case INIT:
-      return state
+  switch (type) {
+    case SET_ROUND:
+      return {
+        ...state,
+        round: payload
+      }
     default:
       return state
   }
 }
 
 // Action creators
-export function initGame(): Action {
-  return { type: INIT }
+export function setRound(payload: number): Action {
+  return {
+    type: SET_ROUND,
+    payload
+  }
 }

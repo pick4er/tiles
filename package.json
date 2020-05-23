@@ -19,6 +19,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
     "redux": "^4.0.5",
+    "reselect": "^4.0.0",
     "typescript": "^3.9.3"
   },
   "scripts": {
@@ -43,6 +44,7 @@
     ]
   },
   "devDependencies": {
-    "@types/classnames": "^2.2.10"
+    "@types/classnames": "^2.2.10",
+    "@types/reselect": "^2.2.0"
   }
 }

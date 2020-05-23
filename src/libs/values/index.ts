@@ -5,6 +5,8 @@ import type {
   TileId
 } from 'libs/types';
 
+export const defaultValues = ['red', 'green', 'blue', 'white', 'black', 'orange']
+
 export const TilesValues: TilesValuesConstructor =
 class TilesValues implements TilesValuesInterface {
   valuesToIds: Record<TileValue, TileId[]> = {};
