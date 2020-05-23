@@ -12,21 +12,24 @@ export interface OpenableTile extends BaseTile {
 
 export interface TilesInterface<Tile> {
   tiles: Tile[];
-  twoDimensionalTiles: Tile[][];
+  twoDimensionalTiles: (Tile[])[];
 
   mix(): void;
 }
 
 export interface TilesConstructor<Tile> {
   new (
-    public width: number,
-    public height: number
+    width: number,
+    height: number
   ): TilesInterface<Tile>;
 }
 
-export interface OpenableTilesConstructor extends TilesConstructor<OpenableTile> {}
+export interface OpenableTilesConstructor 
+  extends TilesConstructor<OpenableTile> {}
 
-export interface OpenableTilesInterface extends TilesInterface<OpenableTile> {
+export interface OpenableTilesInterface
+  extends TilesInterface<OpenableTile>
+{
   tilesIds: TileId[];
 
   toggleTile(id: TileId): void;
@@ -42,7 +45,7 @@ export interface TilesValuesInterface {
 
 export interface TilesValuesConstructor {
   new (
-    public ids: TileId[],
-    public values: TileValue[]
+    ids: TileId[],
+    values: TileValue[]
   ): TilesValuesInterface;
 }
