@@ -17,7 +17,7 @@ class OpenableTiles implements OpenableTilesInterface {
   }
 
   private generate(): void {
-    for (let id = 0; id < width * height; id++) {
+    for (let id = 0; id < this.width * this.height; id++) {
       this.tiles.push({
         id,
         isOpen: false
@@ -29,13 +29,13 @@ class OpenableTiles implements OpenableTilesInterface {
     return this.tiles.map(({ id }) => id)
   }
 
-  get twoDimensionalTiles(): OpenableTile[][] {
-    const twoDimensionalTiles: OpenableTile[] = [];
+  get twoDimensionalTiles(): (OpenableTile[])[] {
+    const twoDimensionalTiles: (OpenableTile[])[] = [];
 
-    for (let h = 0; h < height; h++) {
+    for (let h = 0; h < this.height; h++) {
       const rowTiles: OpenableTile[] = [];
 
-      for (let w = 0; w < weight; w++) {
+      for (let w = 0; w < this.width; w++) {
         rowTiles.push(this.tiles[w * h])
       }
 
@@ -46,7 +46,10 @@ class OpenableTiles implements OpenableTilesInterface {
   }
 
   toggleTile(id: TileId): void {
-    const tile = this.tiles.find(({ id: _id }) => _id === id)
+    const tile = this.tiles.find(
+      ({ id: _id }) => _id === id
+    )
+
     if (!tile) {
       throw new TypeError('No tile matches provided id')
     }
@@ -56,7 +59,7 @@ class OpenableTiles implements OpenableTilesInterface {
 
   mix(): void {
     for (let i = this.tiles.length - 1; i < 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
+      const j = Math.floor(Math.random() * (i + 1)) as number
       [this.tiles[i], this.tiles[j]] = [this.tiles[j], this.tiles[i]]
     }
   }
