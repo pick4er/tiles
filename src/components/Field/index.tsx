@@ -8,16 +8,16 @@ import React from 'react';
 import Tile from 'components/Tile';
 
 interface Props {
-  tiles: (OpenableTile[])[];
-  values: Record<TileId, TileValue>;
-  toggleTile(id: TileId): void;
+  tiles?: (OpenableTile[])[];
+  values?: Record<TileId, TileValue>;
+  toggleTile?: (id: TileId) => void;
 }
 
 export default function Field(props: Props) {
   const {
-    tiles,
-    values,
-    toggleTile
+    tiles = [],
+    values = {},
+    toggleTile = () => {},
   } = props
 
   return (
@@ -27,10 +27,11 @@ export default function Field(props: Props) {
           <Tile
             id={id}
             key={id}
+            isOpen={isOpen}
             onClick={toggleTile}
             style={{
-              'grid-row': row,
-              'grid-column': column
+              gridRow: row,
+              gridColumn: column
             }}
           >
             <div className={values[id] as TileValue} />

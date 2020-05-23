@@ -37,7 +37,6 @@ export interface OpenableTilesInterface
   toggleTile(id: TileId): void;
 }
 
-
 export interface TilesValuesInterface {
   idsToValues: Record<TileId, TileValue>;
   valuesToIds: Record<TileValue, TileId[]>;
