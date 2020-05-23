@@ -40,7 +40,7 @@ export interface TilesValuesInterface {
   idsToValues: Record<TileId, TileValue>;
   valuesToIds: Record<TileValue, TileId[]>;
 
-  isMatch(ids: TileId[]): boolean | undefined;
+  isMatch(ids?: TileId[]): boolean | undefined;
 }
 
 export interface TilesValuesConstructor {
