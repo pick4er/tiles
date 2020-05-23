@@ -2,7 +2,7 @@ import type {
   OpenableTile,
   TileValue,
   TileId
-} from 'libs/types'
+} from 'types'
 
 import React from 'react';
 import { connect } from 'react-redux';

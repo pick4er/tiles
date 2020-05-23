@@ -2,7 +2,7 @@ import type {
   OpenableTile,
   TileValue,
   TileId,
-} from 'libs/types';
+} from 'types';
 import type { RootState } from 'flux';
 
 import React, { useEffect } from 'react';

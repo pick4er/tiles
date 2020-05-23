@@ -1,5 +1,5 @@
 import type { ReactNode, CSSProperties } from 'react';
-import type { TileId } from 'libs/types';
+import type { TileId } from 'types';
 
 import React from 'react';
 import cx from 'classnames';
