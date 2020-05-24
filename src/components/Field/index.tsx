@@ -9,6 +9,7 @@ import type {
 
 import React from 'react';
 import { connect } from 'react-redux';
+import cx from 'classnames';
 
 import Tile from 'components/Tile';
 import {
@@ -17,7 +18,7 @@ import {
   toggleTile as toggleTileAction
 } from 'flux/modules/field';
 
-import styles from './index.module.scss'
+import css from './index.module.scss'
 
 interface Props {
   tiles: (OpenableTile[])[];
@@ -33,7 +34,7 @@ function Field(props: Props) {
   } = props
 
   return (
-    <div className={styles.field}>
+    <div className={css.field}>
       {tiles.map((tilesRow, row) =>
         tilesRow.map(({ id, isOpen }, column) =>
           <Tile
@@ -47,7 +48,10 @@ function Field(props: Props) {
               gridColumn: column + 1
             }}
           >
-            <div className={values[id] as TileValue} />
+            <div className={cx({
+              [values[id] as TileValue]: true,
+              [css.value]: true,
+            })} />
           </Tile>
         )
       )}

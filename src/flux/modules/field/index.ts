@@ -28,12 +28,11 @@ const SET_WIDTH = 'FIELD/SET_WIDTH'
 const SET_HEIGHT = 'FIELD/SET_HEIGHT'
 const SET_IS_MATCH = 'FIELD/SET_IS_MATCH'
 
-const defaultValues = ['red', 'green', 'blue', 'white', 'black', 'orange']
 const initialState: State = {
   width: undefined,
   height: undefined,
   tiles: undefined,
-  values: defaultValues,
+  values: undefined,
   isMatch: undefined,
 }
 
@@ -214,7 +213,7 @@ export const setIsMatch = (
 })
 
 export const setValues = (
-  payload: Record<TileValue, TileId[]>
+  payload: TileValue[]
 ): PayloadAction => ({
   type: SET_VALUES,
   payload
@@ -325,7 +324,8 @@ export const areValuesMatch: ActionCreator<
 
 export const initField: ActionCreator<
   ThunkAction<void, RootState, void, PayloadAction>
-> = () => dispatch => {
+> = (values: TileValue[]) => dispatch => {
+  dispatch(setValues(values))
   dispatch(setHeight(4))
   dispatch(setWidth(4))
   dispatch(initTiles())
