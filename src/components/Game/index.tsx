@@ -39,8 +39,8 @@ function parseNotification(
 }
 
 const defaultValues = [
-  css.red, css.green, css.blue,
-  css.purple, css.grey, css.orange
+  css.red, css.green, css.yellow,
+  css.purple, css.grey, css.azure
 ]
 function Game(props: Props) {
   const {

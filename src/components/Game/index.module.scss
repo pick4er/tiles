@@ -1,3 +1,4 @@
+@import 'styles';
 
 .game {
   display: flex;
@@ -18,8 +19,8 @@
   background-color: green;
 }
 
-.blue {
-  background-color: blue;
+.azure {
+  background-color: $azure;
 }
 
 .purple {
@@ -30,6 +31,6 @@
   background-color: grey;
 }
 
-.orange {
-  background-color: orange;
+.yellow {
+  background-color: yellow;
 }

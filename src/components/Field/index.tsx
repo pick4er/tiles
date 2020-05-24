@@ -13,6 +13,7 @@ import cx from 'classnames';
 
 import Tile from 'components/Tile';
 import {
+  selectIdsToMatch,
   selectIdsToValues,
   selectTwoDimensionalTiles,
   openTile as openTileAction
@@ -22,6 +23,7 @@ import css from './index.module.scss'
 
 interface Props {
   tiles: (OpenableTile[])[];
+  idsToMatch: TileId[];
   values: Record<TileId, TileValue>;
   openTile: (id: TileId) => void;
 }
@@ -30,7 +32,8 @@ function Field(props: Props) {
   const {
     tiles,
     values,
-    openTile
+    openTile,
+    idsToMatch
   } = props
 
   return (
@@ -43,6 +46,10 @@ function Field(props: Props) {
                 id={id}
                 isOpen={isOpen}
                 onClick={openTile}
+                className={cx({
+                  [css.quessed]: isOpen
+                    && idsToMatch.indexOf(id) === -1
+                })}
               >
                 <div className={cx({
                   [values[id] as TileValue]: true,
@@ -59,6 +66,7 @@ function Field(props: Props) {
 
 const mapStateToProps = (state: RootState) => ({
   values: selectIdsToValues(state),
+  idsToMatch: selectIdsToMatch(state),
   tiles: selectTwoDimensionalTiles(state),
 })
 const mapDispatchToProps = (
