@@ -4,6 +4,8 @@ import type { TileId } from 'types';
 import React from 'react';
 import cx from 'classnames';
 
+import css from './index.module.scss';
+
 interface Props {
   id: TileId;
   isOpen: boolean;
@@ -24,8 +26,8 @@ export default function Tile(props: Props) {
   } = props;
 
   const classNames = cx({
-    tile: true,
-    open: isOpen,
+    [css.tile]: true,
+    [css.open]: isOpen,
     [className || '']: className
   })
 
