@@ -5,7 +5,7 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 
 import Field from 'components/Field';
-import { initField, mixTiles } from 'flux/modules/field';
+import { initField } from 'flux/modules/field';
 import { selectRound } from 'flux/modules/game';
 
 import css from './index.module.scss';
@@ -13,7 +13,6 @@ import css from './index.module.scss';
 interface Props {
   round: number;
   initField(values: TileValue[]): void;
-  mixTiles(): void;
 }
 
 const defaultValues = [
@@ -21,7 +20,7 @@ const defaultValues = [
   css.white, css.black, css.orange
 ]
 function Game(props: Props) {
-  const { round, initField, mixTiles } = props;
+  const { round, initField } = props;
 
   useEffect(() => {
     initField(defaultValues)
@@ -30,9 +29,6 @@ function Game(props: Props) {
   return (
     <div>
       <h3>Round { round }</h3>
-      <button type="button" onClick={mixTiles}>
-        Mix tiles
-      </button>
       <Field />
     </div>
   )
@@ -42,8 +38,7 @@ const mapStateToProps = (state: RootState) => ({
   round: selectRound(state)
 })
 const mapDispatchToProps = {
-  initField,
-  mixTiles,
+  initField
 }
 
 export default connect(

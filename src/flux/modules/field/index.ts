@@ -15,22 +15,22 @@ interface State {
   width?: number;
   height?: number;
   tiles?: OpenableTile[];
-  values?: string[];
+  valuesToIds: Record<TileValue, TileId[]>;
   idsToMatch: TileId[]
 }
 
 // Actions
 const SET_TILES = 'FIELD/SET_TILES'
-const SET_VALUES = 'FIELD/SET_VALUES'
 const SET_WIDTH = 'FIELD/SET_WIDTH'
 const SET_HEIGHT = 'FIELD/SET_HEIGHT'
 const SET_IDS_TO_MATCH = 'FIELD/SET_IDS_TO_MATCH'
+const SET_VALUES_TO_IDS = 'FIELD/SET_VALUES_TO_IDS'
 
 const initialState: State = {
   width: undefined,
   height: undefined,
   tiles: undefined,
-  values: undefined,
+  valuesToIds: {},
   idsToMatch: [],
 }
 
@@ -50,10 +50,10 @@ export default function reducer(
         ...state,
         idsToMatch: payload
       }
-    case SET_VALUES:
+    case SET_VALUES_TO_IDS:
       return {
         ...state,
-        values: payload
+        valuesToIds: payload
       }
     case SET_WIDTH:
       return {
@@ -93,6 +93,12 @@ export const selectTiles = createSelector(
   ({ tiles }): OpenableTile[] | undefined => tiles
 )
 
+export const selectValuesToIds = createSelector(
+  selectFieldModule,
+  ({ valuesToIds }): Record<TileValue, TileId[]> =>
+    valuesToIds
+)
+
 export const selectTilesIds = createSelector(
   selectTiles,
   (tiles): TileId[] => 
@@ -127,52 +133,6 @@ export const selectTwoDimensionalTiles = createSelector(
     }
 
     return twoDimensionalTiles
-  }
-)
-
-export const selectValues = createSelector(
-  selectFieldModule,
-  ({ values }): string[] => values
-)
-
-export const selectValuesToIds = createSelector(
-  selectTilesIds,
-  selectValues,
-  (tilesIds, values): Record<TileValue, TileId[]> => {
-    const valuesToIds: Record<TileValue, TileId[]> = {}
-
-    let valueId = 0;
-    let identifierId = 0;
-    while (identifierId < tilesIds.length) {
-      const value = values[valueId]
-      const firstIdentifier = tilesIds[identifierId]
-      const secondIdentifier = tilesIds[identifierId + 1]
-
-      if (!valuesToIds[value]) {
-        valuesToIds[value] = []
-      }
-
-      // out of ids range
-      if (typeof secondIdentifier === 'undefined') {
-        // identifier must have a value couple
-        valuesToIds[value] = valuesToIds[value].concat(
-          firstIdentifier
-        )
-      } else {
-        valuesToIds[value] = valuesToIds[value].concat([
-          firstIdentifier, secondIdentifier
-        ])
-      }
-
-      valueId += 1;
-      if (valueId === values.length) {
-        valueId = 0;
-      }
-
-      identifierId += 2; // two tiles at least
-    }
-
-    return valuesToIds
   }
 )
 
@@ -222,10 +182,10 @@ export const setIdsToMatch = (
   payload
 })
 
-export const setValues = (
-  payload: TileValue[]
+export const setValuesToIds = (
+  payload: Record<TileValue, TileId[]>
 ): PayloadAction => ({
-  type: SET_VALUES,
+  type: SET_VALUES_TO_IDS,
   payload
 })
 
@@ -265,6 +225,46 @@ export const initTiles: ActionCreator<
   }
 
   dispatch<PayloadAction>(setTiles(tiles))
+}
+
+export const initValuesToIds: ActionCreator<
+  ThunkAction<void, RootState, void, PayloadAction>
+> = (values: TileValue[]) => (dispatch, getState) => {
+  const tilesIds = selectTilesIds(getState())
+  const valuesToIds: Record<TileValue, TileId[]> = {}
+
+  let valueId = 0;
+  let identifierId = 0;
+  while (identifierId < tilesIds.length) {
+    const value = values[valueId]
+    const firstIdentifier = tilesIds[identifierId]
+    const secondIdentifier = tilesIds[identifierId + 1]
+
+    if (!valuesToIds[value]) {
+      valuesToIds[value] = []
+    }
+
+    // out of ids range
+    if (typeof secondIdentifier === 'undefined') {
+      // identifier must have a value couple
+      valuesToIds[value] = valuesToIds[value].concat(
+        firstIdentifier
+      )
+    } else {
+      valuesToIds[value] = valuesToIds[value].concat([
+        firstIdentifier, secondIdentifier
+      ])
+    }
+
+    valueId += 1;
+    if (valueId === values.length) {
+      valueId = 0;
+    }
+
+    identifierId += 2; // two tiles at least
+  }
+
+  dispatch(setValuesToIds(valuesToIds))
 }
 
 export const mixTiles: ActionCreator<
@@ -329,9 +329,9 @@ export const openTile: ActionCreator<
 export const initField: ActionCreator<
   ThunkAction<void, RootState, void, PayloadAction>
 > = (values: TileValue[]) => dispatch => {
-  dispatch(setValues(values))
   dispatch(setHeight(4))
   dispatch(setWidth(4))
   dispatch(initTiles())
+  dispatch(initValuesToIds(values))
   dispatch(mixTiles())
 }
