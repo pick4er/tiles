@@ -8,6 +8,7 @@ interface Props {
   id: TileId;
   isOpen: boolean;
   onClick(id: TileId): void;
+  className?: string;
   style?: CSSProperties;
   children?: ReactNode;
 }
@@ -18,12 +19,14 @@ export default function Tile(props: Props) {
     style,
     isOpen,
     onClick,
-    children
+    children,
+    className,
   } = props;
 
   const classNames = cx({
     tile: true,
-    open: isOpen
+    open: isOpen,
+    [className || '']: className
   })
 
   return (

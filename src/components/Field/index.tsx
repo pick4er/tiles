@@ -14,6 +14,7 @@ import cx from 'classnames';
 import Tile from 'components/Tile';
 import {
   selectIdsToValues,
+  selectIdsToMatch,
   selectTwoDimensionalTiles,
   openTile as openTileAction
 } from 'flux/modules/field';
@@ -22,6 +23,7 @@ import css from './index.module.scss'
 
 interface Props {
   tiles: (OpenableTile[])[];
+  idsToMatch: TileId[];
   values: Record<TileId, TileValue>;
   openTile: (id: TileId) => void;
 }
@@ -31,6 +33,7 @@ function Field(props: Props) {
     tiles,
     values,
     openTile,
+    idsToMatch,
   } = props
 
   return (
@@ -42,6 +45,10 @@ function Field(props: Props) {
             key={id}
             isOpen={isOpen}
             onClick={openTile}
+            className={cx({
+              [css.hidden]: isOpen
+                && (idsToMatch.indexOf(id) === -1)
+            })}
             style={{
               // indexing from 0, grid from 1
               gridRow: row + 1,
@@ -61,6 +68,7 @@ function Field(props: Props) {
 
 const mapStateToProps = (state: RootState) => ({
   values: selectIdsToValues(state),
+  idsToMatch: selectIdsToMatch(state),
   tiles: selectTwoDimensionalTiles(state),
 })
 const mapDispatchToProps = (
