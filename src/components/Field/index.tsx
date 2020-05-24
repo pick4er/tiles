@@ -15,7 +15,7 @@ import Tile from 'components/Tile';
 import {
   selectIdsToValues,
   selectTwoDimensionalTiles,
-  toggleTile as toggleTileAction
+  openTile as openTileAction
 } from 'flux/modules/field';
 
 import css from './index.module.scss'
@@ -23,14 +23,14 @@ import css from './index.module.scss'
 interface Props {
   tiles: (OpenableTile[])[];
   values: Record<TileId, TileValue>;
-  toggleTile: (id: TileId) => void;
+  openTile: (id: TileId) => void;
 }
 
 function Field(props: Props) {
   const {
     tiles,
     values,
-    toggleTile,
+    openTile,
   } = props
 
   return (
@@ -41,7 +41,7 @@ function Field(props: Props) {
             id={id}
             key={id}
             isOpen={isOpen}
-            onClick={toggleTile}
+            onClick={openTile}
             style={{
               // indexing from 0, grid from 1
               gridRow: row + 1,
@@ -66,8 +66,8 @@ const mapStateToProps = (state: RootState) => ({
 const mapDispatchToProps = (
   dispatch: ThunkDispatch<RootState, void, Action>
 ) => ({
-  toggleTile: (id: TileId) => 
-    dispatch(toggleTileAction(id)),
+  openTile: (id: TileId) => 
+    dispatch(openTileAction(id)),
 })
 
 export default connect(
