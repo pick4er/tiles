@@ -10,13 +10,17 @@ import { MatchNotifications }  from 'flux/types';
 
 interface State {
   isMatchNotification?: MatchNotifications;
+  isMatchTimer?: any;
 }
 
 const SET_IS_MATCH_NOTIFICATION =
   'NOTIFICATIONS/SET_IS_MATCH_NOTIFICATION'
+const SET_IS_MATCH_TIMER =
+  'NOTIFICATIONS/SET_IS_MATCH_TIMER'
 
 const initialState: State = {
-  isMatchNotification: undefined
+  isMatchNotification: undefined,
+  isMatchTimer: undefined
 }
 
 export default function reducer(
@@ -28,6 +32,11 @@ export default function reducer(
       return {
         ...state,
         isMatchNotification: payload
+      }
+    case SET_IS_MATCH_TIMER:
+      return {
+        ...state,
+        isMatchTimer: payload
       }
     default:
       return state
@@ -44,11 +53,23 @@ export const selectIsMatchNotification = createSelector(
     isMatchNotification
 )
 
+export const selectIsMatchTimer = createSelector(
+  notificationsModule,
+  ({ isMatchTimer }) => isMatchTimer
+)
+
 // Action creators
 export const setIsMatchNotification = (
   payload: MatchNotifications | undefined
 ): PayloadAction => ({
   type: SET_IS_MATCH_NOTIFICATION,
+  payload
+})
+
+export const setIsMatchTimer = (
+  payload: any | undefined
+): PayloadAction => ({
+  type: SET_IS_MATCH_TIMER,
   payload
 })
 
@@ -82,4 +103,16 @@ export const notifyAboutMatch: ActionCreator<
   setTimeout(() => {
     dispatch(setIsMatchNotification(undefined))
   }, 2000)
+}
+
+export const cancelMatchNotification: ActionCreator<
+  ThunkAction<void, RootState, void, PayloadAction>
+> = () => (dispatch, getState) => {
+  const isMatchNotification = selectIsMatchNotification(getState())
+  if (typeof isMatchNotification === 'undefined') {
+    return
+  }
+
+  dispatch(setIsMatchTimer(undefined))
+  dispatch(setIsMatchNotification(undefined))
 }

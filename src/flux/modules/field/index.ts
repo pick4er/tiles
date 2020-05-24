@@ -11,7 +11,8 @@ import { createSelector } from 'reselect';
 import { compareArrays } from 'helpers';
 import { updateRound } from 'flux/modules/game';
 import {
-  notifyAboutMatch
+  notifyAboutMatch,
+  cancelMatchNotification
 } from 'flux/modules/notifications';
 
 interface State {
@@ -333,6 +334,7 @@ export const openTile: ActionCreator<
   const nextIdsToMatch: TileId[] = 
     selectIdsToMatch(getState()).concat(tileId)
 
+  dispatch(cancelMatchNotification())
   dispatch(setIdsToMatch(nextIdsToMatch))
   const isMatch = selectIsMatch(getState())
   if (isMatch === false) {
