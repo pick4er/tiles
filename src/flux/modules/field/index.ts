@@ -151,6 +151,32 @@ export const selectIdsToValues = createSelector(
   }
 )
 
+export const selectTilesOfCurrentValue = createSelector(
+  selectIdsToMatch,
+  selectValuesToIds,
+  selectIdsToValues,
+  (selectedTilesIds, valuesToIds, idsToValues): TileId[] | undefined => {
+    const value = idsToValues[selectedTilesIds[0]] as TileValue | undefined
+    if (typeof value === 'undefined') {
+      return undefined
+    }
+
+    return valuesToIds[value]
+  }
+)
+
+export const selectLeftTiles = createSelector(
+  selectTilesOfCurrentValue,
+  selectIdsToMatch,
+  (sameValueTiles, tilesSelected): number | undefined => {
+    if (typeof sameValueTiles === 'undefined') {
+      return undefined
+    }
+
+    return sameValueTiles.length - tilesSelected.length
+  }
+)
+
 export const selectIsMatch = createSelector(
   selectIdsToValues,
   selectValuesToIds,
