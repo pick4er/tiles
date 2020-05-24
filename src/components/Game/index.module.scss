@@ -1,5 +1,9 @@
 
 .game {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+
   h5 {
     height: 14px;
     font-size: 14px;

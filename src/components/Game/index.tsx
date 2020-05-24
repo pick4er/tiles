@@ -1,10 +1,11 @@
-import type { RootState, MatchNotifications } from 'flux/types';
 import type { TileValue } from 'types';
+import type { RootState } from 'flux/types';
 
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 
 import Field from 'components/Field';
+import { MatchNotifications } from 'flux/types';
 import { selectRound } from 'flux/modules/game';
 import {
   initField,
@@ -21,6 +22,20 @@ interface Props {
   tilesLeft?: number;
   notification?: MatchNotifications;
   initField(values: TileValue[]): void;
+}
+
+function parseNotification(
+  notification: MatchNotifications
+): string | undefined {
+  if (notification === MatchNotifications.Match) {
+    return 'You guessed!'
+  }
+
+  if (notification === MatchNotifications.NotMatch) {
+    return 'Fail. Try again, please'
+  }
+
+  return
 }
 
 const defaultValues = [
@@ -49,7 +64,7 @@ function Game(props: Props) {
           </span>
         )}
         {notification && (
-          <span>{ notification }</span>          
+          <span>{ parseNotification(notification) }</span>          
         )}
       </h5>
       <Field />
