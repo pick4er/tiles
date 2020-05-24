@@ -2,8 +2,10 @@
 .tile {
   width: 80px;
   height: 80px;
+  display: block;
   border: none;
   cursor: pointer;
+  padding: 0;
   background-color: RGBA(255, 179, 71, 1);
 
   &:hover {

@@ -25,7 +25,7 @@ interface Props {
 
 const defaultValues = [
   css.red, css.green, css.blue,
-  css.white, css.black, css.orange
+  css.purple, css.grey, css.orange
 ]
 function Game(props: Props) {
   const {
@@ -40,12 +40,18 @@ function Game(props: Props) {
   }, [initField])
 
   return (
-    <div>
+    <div className={css.game}>
       <h3>Round { round }</h3>
-      {tilesLeft && (
-        <h5>{ tilesLeft } tiles left to guess</h5>
-      )}
-      {notification && <h5>{ notification }</h5>}
+      <h5>
+        {tilesLeft && (
+          <span>
+            { tilesLeft } tiles left to guess
+          </span>
+        )}
+        {notification && (
+          <span>{ notification }</span>          
+        )}
+      </h5>
       <Field />
     </div>
   )
