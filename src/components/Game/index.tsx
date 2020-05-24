@@ -1,3 +1,5 @@
+import type { ThunkDispatch } from 'redux-thunk';
+import type { Action } from 'redux';
 import type { TileValue } from 'types';
 import type { RootState } from 'flux/types';
 
@@ -8,8 +10,9 @@ import Field from 'components/Field';
 import { MatchNotifications } from 'flux/types';
 import { selectRound } from 'flux/modules/game';
 import {
-  initField,
-  selectLeftTiles
+  selectLeftTiles,
+  initField as initFieldAction,
+  startNewGame as startNewGameAction,
 } from 'flux/modules/field';
 import {
   selectIsMatchNotification
@@ -21,6 +24,7 @@ interface Props {
   round: number;
   tilesLeft?: number;
   notification?: MatchNotifications;
+  startNewGame(values: TileValue[]): void;
   initField(values: TileValue[]): void;
 }
 
@@ -47,12 +51,15 @@ function Game(props: Props) {
     round,
     initField,
     tilesLeft,
-    notification
+    notification,
+    startNewGame,
   } = props;
 
   useEffect(() => {
     initField(defaultValues)
   }, [initField])
+
+  const onStartNewGame = () => startNewGame(defaultValues)
 
   return (
     <div className={css.game}>
@@ -68,6 +75,11 @@ function Game(props: Props) {
         )}
       </h5>
       <Field />
+      <div className={css.actions}>
+        <button type="button" onClick={onStartNewGame}>
+          Start again
+        </button>
+      </div>
     </div>
   )
 }
@@ -77,9 +89,14 @@ const mapStateToProps = (state: RootState) => ({
   tilesLeft: selectLeftTiles(state),
   notification: selectIsMatchNotification(state),
 })
-const mapDispatchToProps = {
-  initField
-}
+const mapDispatchToProps = (
+  dispatch: ThunkDispatch<RootState, void, Action>
+) => ({
+  initField: (values: TileValue[]) =>
+    dispatch(initFieldAction(values)),
+  startNewGame: (values: TileValue[]) =>
+    dispatch(startNewGameAction(values))
+})
 
 export default connect(
   mapStateToProps,
