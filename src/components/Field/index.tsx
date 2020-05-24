@@ -13,6 +13,7 @@ import cx from 'classnames';
 
 import Tile from 'components/Tile';
 import {
+  selectTiles,
   selectIdsToValues,
   selectTwoDimensionalTiles,
   openTile as openTileAction
@@ -22,6 +23,7 @@ import css from './index.module.scss'
 
 interface Props {
   tiles: (OpenableTile[])[];
+  oneDimensionalTiles?: OpenableTile[];
   values: Record<TileId, TileValue>;
   openTile: (id: TileId) => void;
 }
@@ -31,6 +33,7 @@ function Field(props: Props) {
     tiles,
     values,
     openTile,
+    oneDimensionalTiles,
   } = props
 
   return (
@@ -62,6 +65,7 @@ function Field(props: Props) {
 const mapStateToProps = (state: RootState) => ({
   values: selectIdsToValues(state),
   tiles: selectTwoDimensionalTiles(state),
+  oneDimensionalTiles: selectTiles(state),
 })
 const mapDispatchToProps = (
   dispatch: ThunkDispatch<RootState, void, Action>

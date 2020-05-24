@@ -1,6 +1,6 @@
-import type { ActionCreator, Action } from 'redux';
+import type { ActionCreator } from 'redux';
 import type { ThunkAction } from 'redux-thunk';
-import type { RootState } from 'flux/types';
+import type { RootState, PayloadAction } from 'flux/types';
 import type {
   OpenableTile,
   TileValue,
@@ -8,7 +8,8 @@ import type {
 } from 'types';
 
 import { createSelector } from 'reselect';
-import { compareArrays } from 'helpers'
+import { compareArrays } from 'helpers';
+import { updateRound } from 'flux/modules/game';
 
 interface State {
   width?: number;
@@ -16,10 +17,6 @@ interface State {
   tiles?: OpenableTile[];
   values?: string[];
   idsToMatch: TileId[]
-}
-
-interface PayloadAction extends Action<string> {
-  payload?: any;
 }
 
 // Actions
@@ -144,10 +141,6 @@ export const selectValuesToIds = createSelector(
   (tilesIds, values): Record<TileValue, TileId[]> => {
     const valuesToIds: Record<TileValue, TileId[]> = {}
 
-    if (typeof tilesIds === 'undefined') {
-      return valuesToIds
-    }
-
     let valueId = 0;
     let identifierId = 0;
     while (identifierId < tilesIds.length) {
@@ -176,7 +169,7 @@ export const selectValuesToIds = createSelector(
         valueId = 0;
       }
 
-      identifierId += 2; // two symbols at least
+      identifierId += 2; // two tiles at least
     }
 
     return valuesToIds
@@ -320,8 +313,12 @@ export const openTile: ActionCreator<
       )
       tileToClose.isOpen = false
     })
+
+    dispatch(setTiles(tiles))
+    dispatch(updateRound())
+  } else {
+    dispatch(setTiles(tiles))
   }
-  dispatch(setTiles(tiles))
 
   // typeof undefined is not a full match
   if (typeof isMatch === 'boolean') {
@@ -336,4 +333,5 @@ export const initField: ActionCreator<
   dispatch(setHeight(4))
   dispatch(setWidth(4))
   dispatch(initTiles())
+  dispatch(mixTiles())
 }
