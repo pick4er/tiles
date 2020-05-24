@@ -1,4 +1,4 @@
-import type { RootState } from 'flux/types';
+import type { RootState, MatchNotifications } from 'flux/types';
 import type { TileValue } from 'types';
 
 import React, { useEffect } from 'react';
@@ -10,12 +10,16 @@ import {
   initField,
   selectLeftTiles
 } from 'flux/modules/field';
+import {
+  selectIsMatchNotification
+} from 'flux/modules/notifications';
 
 import css from './index.module.scss';
 
 interface Props {
   round: number;
   tilesLeft?: number;
+  notification?: MatchNotifications;
   initField(values: TileValue[]): void;
 }
 
@@ -24,7 +28,12 @@ const defaultValues = [
   css.white, css.black, css.orange
 ]
 function Game(props: Props) {
-  const { round, initField, tilesLeft } = props;
+  const {
+    round,
+    initField,
+    tilesLeft,
+    notification
+  } = props;
 
   useEffect(() => {
     initField(defaultValues)
@@ -36,6 +45,7 @@ function Game(props: Props) {
       {tilesLeft && (
         <h5>{ tilesLeft } tiles left to guess</h5>
       )}
+      {notification && <h5>{ notification }</h5>}
       <Field />
     </div>
   )
@@ -44,6 +54,7 @@ function Game(props: Props) {
 const mapStateToProps = (state: RootState) => ({
   round: selectRound(state),
   tilesLeft: selectLeftTiles(state),
+  notification: selectIsMatchNotification(state),
 })
 const mapDispatchToProps = {
   initField

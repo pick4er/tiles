@@ -10,13 +10,16 @@ import type {
 import { createSelector } from 'reselect';
 import { compareArrays } from 'helpers';
 import { updateRound } from 'flux/modules/game';
+import {
+  notifyAboutMatch
+} from 'flux/modules/notifications';
 
 interface State {
   width?: number;
   height?: number;
   tiles?: OpenableTile[];
+  idsToMatch: TileId[],
   valuesToIds: Record<TileValue, TileId[]>;
-  idsToMatch: TileId[]
 }
 
 // Actions
@@ -156,7 +159,9 @@ export const selectTilesOfCurrentValue = createSelector(
   selectValuesToIds,
   selectIdsToValues,
   (selectedTilesIds, valuesToIds, idsToValues): TileId[] | undefined => {
-    const value = idsToValues[selectedTilesIds[0]] as TileValue | undefined
+    const value = idsToValues[
+      selectedTilesIds[0]
+    ] as TileValue | undefined
     if (typeof value === 'undefined') {
       return undefined
     }
@@ -182,7 +187,7 @@ export const selectIsMatch = createSelector(
   selectValuesToIds,
   selectIdsToMatch,
   (idsToValues, valuesToIds, ids): boolean | undefined => {
-    if (typeof ids === 'undefined') {
+    if (ids.length === 0) {
       return undefined
     }
 
@@ -321,7 +326,6 @@ export const openTile: ActionCreator<
     ({ id }: OpenableTile) => id === tileId
   ) as OpenableTile
   if (tile.isOpen) {
-    // do not close opened tile
     return
   }
 
@@ -349,6 +353,7 @@ export const openTile: ActionCreator<
   // typeof undefined is not a full match
   if (typeof isMatch === 'boolean') {
     dispatch(setIdsToMatch([]))
+    dispatch(notifyAboutMatch(isMatch))
   }
 }
 
