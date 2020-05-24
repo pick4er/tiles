@@ -7,8 +7,13 @@ import {
 
 import game from 'flux/modules/game';
 import field from 'flux/modules/field';
+import notifications from 'flux/modules/notifications';
 
-export const rootReducer = combineReducers({ game, field })
+export const rootReducer = combineReducers({ 
+  game,
+  field,
+  notifications,
+})
 export default createStore(
   rootReducer,
   applyMiddleware(thunk)

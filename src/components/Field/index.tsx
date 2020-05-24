@@ -9,45 +9,49 @@ import type {
 
 import React from 'react';
 import { connect } from 'react-redux';
+import cx from 'classnames';
 
 import Tile from 'components/Tile';
 import {
   selectIdsToValues,
   selectTwoDimensionalTiles,
-  toggleTile as toggleTileAction
+  openTile as openTileAction
 } from 'flux/modules/field';
 
-import styles from './index.module.scss'
+import css from './index.module.scss'
 
 interface Props {
   tiles: (OpenableTile[])[];
   values: Record<TileId, TileValue>;
-  toggleTile: (id: TileId) => void;
+  openTile: (id: TileId) => void;
 }
 
 function Field(props: Props) {
   const {
     tiles,
     values,
-    toggleTile,
+    openTile,
   } = props
 
   return (
-    <div className={styles.field}>
+    <div className={css.field}>
       {tiles.map((tilesRow, row) =>
         tilesRow.map(({ id, isOpen }, column) =>
           <Tile
             id={id}
             key={id}
             isOpen={isOpen}
-            onClick={toggleTile}
+            onClick={openTile}
             style={{
               // indexing from 0, grid from 1
               gridRow: row + 1,
               gridColumn: column + 1
             }}
           >
-            <div className={values[id] as TileValue} />
+            <div className={cx({
+              [values[id] as TileValue]: true,
+              [css.value]: true,
+            })} />
           </Tile>
         )
       )}
@@ -62,8 +66,8 @@ const mapStateToProps = (state: RootState) => ({
 const mapDispatchToProps = (
   dispatch: ThunkDispatch<RootState, void, Action>
 ) => ({
-  toggleTile: (id: TileId) => 
-    dispatch(toggleTileAction(id)),
+  openTile: (id: TileId) => 
+    dispatch(openTileAction(id)),
 })
 
 export default connect(

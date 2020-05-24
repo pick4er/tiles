@@ -1,6 +1,6 @@
-import type { ActionCreator, Action } from 'redux';
+import type { ActionCreator } from 'redux';
 import type { ThunkAction } from 'redux-thunk';
-import type { RootState } from 'flux/types';
+import type { RootState, PayloadAction } from 'flux/types';
 import type {
   OpenableTile,
   TileValue,
@@ -8,33 +8,34 @@ import type {
 } from 'types';
 
 import { createSelector } from 'reselect';
+import { compareArrays } from 'helpers';
+import { updateRound } from 'flux/modules/game';
+import {
+  notifyAboutMatch,
+  cancelMatchNotification
+} from 'flux/modules/notifications';
 
 interface State {
   width?: number;
   height?: number;
   tiles?: OpenableTile[];
-  values?: string[];
-  isMatch?: boolean;
-}
-
-interface PayloadAction extends Action<string> {
-  payload?: any;
+  idsToMatch: TileId[],
+  valuesToIds: Record<TileValue, TileId[]>;
 }
 
 // Actions
 const SET_TILES = 'FIELD/SET_TILES'
-const SET_VALUES = 'FIELD/SET_VALUES'
 const SET_WIDTH = 'FIELD/SET_WIDTH'
 const SET_HEIGHT = 'FIELD/SET_HEIGHT'
-const SET_IS_MATCH = 'FIELD/SET_IS_MATCH'
+const SET_IDS_TO_MATCH = 'FIELD/SET_IDS_TO_MATCH'
+const SET_VALUES_TO_IDS = 'FIELD/SET_VALUES_TO_IDS'
 
-const defaultValues = ['red', 'green', 'blue', 'white', 'black', 'orange']
 const initialState: State = {
   width: undefined,
   height: undefined,
   tiles: undefined,
-  values: defaultValues,
-  isMatch: undefined,
+  valuesToIds: {},
+  idsToMatch: [],
 }
 
 // Reducer
@@ -48,15 +49,15 @@ export default function reducer(
         ...state,
         tiles: payload
       }
-    case SET_VALUES:
+    case SET_IDS_TO_MATCH:
       return {
         ...state,
-        values: payload
+        idsToMatch: payload
       }
-    case SET_IS_MATCH:
+    case SET_VALUES_TO_IDS:
       return {
         ...state,
-        isMatch: payload
+        valuesToIds: payload
       }
     case SET_WIDTH:
       return {
@@ -86,9 +87,9 @@ export const selectHeight = createSelector(
   ({ height }): number | undefined => height
 )
 
-export const selectIsMatch = createSelector(
+export const selectIdsToMatch = createSelector(
   selectFieldModule,
-  ({ isMatch }): boolean | undefined => isMatch
+  ({ idsToMatch }): TileId[] => idsToMatch
 )
 
 export const selectTiles = createSelector(
@@ -96,9 +97,15 @@ export const selectTiles = createSelector(
   ({ tiles }): OpenableTile[] | undefined => tiles
 )
 
+export const selectValuesToIds = createSelector(
+  selectFieldModule,
+  ({ valuesToIds }): Record<TileValue, TileId[]> =>
+    valuesToIds
+)
+
 export const selectTilesIds = createSelector(
   selectTiles,
-  (tiles): TileId[] | undefined => 
+  (tiles): TileId[] => 
     typeof tiles === 'undefined'
       ? []
       : tiles.map(({ id }: OpenableTile) => id)
@@ -133,56 +140,6 @@ export const selectTwoDimensionalTiles = createSelector(
   }
 )
 
-export const selectValues = createSelector(
-  selectFieldModule,
-  ({ values }): string[] => values
-)
-
-export const selectValuesToIds = createSelector(
-  selectTilesIds,
-  selectValues,
-  (tilesIds, values): Record<TileValue, TileId[]> => {
-    const valuesToIds: Record<TileValue, TileId[]> = {}
-
-    if (typeof tilesIds === 'undefined') {
-      return valuesToIds
-    }
-
-    let valueId = 0;
-    let identifierId = 0;
-    while (identifierId < tilesIds.length) {
-      const value = values[valueId]
-      const firstIdentifier = tilesIds[identifierId]
-      const secondIdentifier = tilesIds[identifierId + 1]
-
-      if (!valuesToIds[value]) {
-        valuesToIds[value] = []
-      }
-
-      // out of ids range
-      if (typeof secondIdentifier === 'undefined') {
-        // identifier must have a value couple
-        valuesToIds[value] = valuesToIds[value].concat(
-          firstIdentifier
-        )
-      } else {
-        valuesToIds[value] = valuesToIds[value].concat([
-          firstIdentifier, secondIdentifier
-        ])
-      }
-
-      valueId += 1;
-      if (valueId === values.length) {
-        valueId = 0;
-      }
-
-      identifierId += 2; // two symbols at least
-    }
-
-    return valuesToIds
-  }
-)
-
 export const selectIdsToValues = createSelector(
   selectValuesToIds,
   (valuesToIds): Record<TileId, TileValue> => {
@@ -198,6 +155,50 @@ export const selectIdsToValues = createSelector(
   }
 )
 
+export const selectTilesOfCurrentValue = createSelector(
+  selectIdsToMatch,
+  selectValuesToIds,
+  selectIdsToValues,
+  (selectedTilesIds, valuesToIds, idsToValues): TileId[] | undefined => {
+    const value = idsToValues[
+      selectedTilesIds[0]
+    ] as TileValue | undefined
+    if (typeof value === 'undefined') {
+      return undefined
+    }
+
+    return valuesToIds[value]
+  }
+)
+
+export const selectLeftTiles = createSelector(
+  selectTilesOfCurrentValue,
+  selectIdsToMatch,
+  (sameValueTiles, tilesSelected): number | undefined => {
+    if (typeof sameValueTiles === 'undefined') {
+      return undefined
+    }
+
+    return sameValueTiles.length - tilesSelected.length
+  }
+)
+
+export const selectIsMatch = createSelector(
+  selectIdsToValues,
+  selectValuesToIds,
+  selectIdsToMatch,
+  (idsToValues, valuesToIds, ids): boolean | undefined => {
+    if (ids.length === 0) {
+      return undefined
+    }
+
+    return compareArrays(
+      ids,
+      valuesToIds[idsToValues[ids[0]]]
+    )
+  }
+)
+
 // Action creators
 export const setTiles = (
   payload: OpenableTile[]
@@ -206,17 +207,17 @@ export const setTiles = (
   payload
 })
 
-export const setIsMatch = (
-  payload: boolean | undefined
+export const setIdsToMatch = (
+  payload: TileId[]
 ): PayloadAction => ({
-  type: SET_IS_MATCH,
+  type: SET_IDS_TO_MATCH,
   payload
 })
 
-export const setValues = (
+export const setValuesToIds = (
   payload: Record<TileValue, TileId[]>
 ): PayloadAction => ({
-  type: SET_VALUES,
+  type: SET_VALUES_TO_IDS,
   payload
 })
 
@@ -258,6 +259,46 @@ export const initTiles: ActionCreator<
   dispatch<PayloadAction>(setTiles(tiles))
 }
 
+export const initValuesToIds: ActionCreator<
+  ThunkAction<void, RootState, void, PayloadAction>
+> = (values: TileValue[]) => (dispatch, getState) => {
+  const tilesIds = selectTilesIds(getState())
+  const valuesToIds: Record<TileValue, TileId[]> = {}
+
+  let valueId = 0;
+  let identifierId = 0;
+  while (identifierId < tilesIds.length) {
+    const value = values[valueId]
+    const firstIdentifier = tilesIds[identifierId]
+    const secondIdentifier = tilesIds[identifierId + 1]
+
+    if (!valuesToIds[value]) {
+      valuesToIds[value] = []
+    }
+
+    // out of ids range
+    if (typeof secondIdentifier === 'undefined') {
+      // identifier must have a value couple
+      valuesToIds[value] = valuesToIds[value].concat(
+        firstIdentifier
+      )
+    } else {
+      valuesToIds[value] = valuesToIds[value].concat([
+        firstIdentifier, secondIdentifier
+      ])
+    }
+
+    valueId += 1;
+    if (valueId === values.length) {
+      valueId = 0;
+    }
+
+    identifierId += 2; // two tiles at least
+  }
+
+  dispatch(setValuesToIds(valuesToIds))
+}
+
 export const mixTiles: ActionCreator<
   ThunkAction<void, RootState, void, PayloadAction>
 > = () => (dispatch, getState) => {
@@ -276,57 +317,54 @@ export const mixTiles: ActionCreator<
   dispatch(setTiles(tiles))
 }
 
-export const toggleTile: ActionCreator<
+export const openTile: ActionCreator<
   ThunkAction<void, RootState, void, PayloadAction>
-> = (tileId: TileId) => (
-  dispatch,
-  getState
-) => {
-  const tiles: OpenableTile[] =
-    JSON.parse(JSON.stringify(selectTiles(getState())))
-
-  const tile = tiles.find(({ id }) => id === tileId)
-  if (!tile) {
-    throw new TypeError('No tile matches provided id')
-  }
-
-  tile.isOpen = !tile.isOpen
-
-  dispatch(setTiles(tiles))
-}
-
-export const areValuesMatch: ActionCreator<
-  ThunkAction<void, RootState, void, PayloadAction>
-> = (ids?: TileId[]) => (dispatch, getState) => {
-  const idsToValues = selectIdsToValues(getState())
-
-  if (typeof ids === 'undefined') {
-    dispatch(setIsMatch(undefined))
+> = (tileId: TileId) => (dispatch, getState) => {
+  const tiles = JSON.parse(JSON.stringify(
+    selectTiles(getState())
+  ))
+  const tile = tiles.find(
+    ({ id }: OpenableTile) => id === tileId
+  ) as OpenableTile
+  if (tile.isOpen) {
     return
   }
 
-  let currentValue: TileValue = ''
-  for (let identifier of ids) {
-    const value = idsToValues[identifier]
+  tile.isOpen = true
+  const nextIdsToMatch: TileId[] = 
+    selectIdsToMatch(getState()).concat(tileId)
 
-    if (!currentValue) {
-      currentValue = value
-    } else if (value === currentValue) {
-      continue
-    } else {
-      dispatch(setIsMatch(false))
-      return
-    }
+  dispatch(cancelMatchNotification())
+  dispatch(setIdsToMatch(nextIdsToMatch))
+  const isMatch = selectIsMatch(getState())
+  if (isMatch === false) {
+    // close all selected tiles for this round
+    nextIdsToMatch.forEach(_id => {
+      const tileToClose = tiles.find(
+        ({ id }: OpenableTile) => id === _id
+      )
+      tileToClose.isOpen = false
+    })
+
+    dispatch(setTiles(tiles))
+    dispatch(updateRound())
+  } else {
+    dispatch(setTiles(tiles))
   }
 
-  dispatch(setIsMatch(true))
-  return
+  // typeof undefined is not a full match
+  if (typeof isMatch === 'boolean') {
+    dispatch(setIdsToMatch([]))
+    dispatch(notifyAboutMatch(isMatch))
+  }
 }
 
 export const initField: ActionCreator<
   ThunkAction<void, RootState, void, PayloadAction>
-> = () => dispatch => {
+> = (values: TileValue[]) => dispatch => {
   dispatch(setHeight(4))
   dispatch(setWidth(4))
   dispatch(initTiles())
+  dispatch(initValuesToIds(values))
+  dispatch(mixTiles())
 }
