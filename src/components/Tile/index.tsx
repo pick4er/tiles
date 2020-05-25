@@ -28,8 +28,8 @@ export default function Tile(props: Props) {
   const classNames = cx({
     [css.tile]: true,
     [css.open]: isOpen,
-    [className || '']: className
-  })
+    [className || '']: className,
+  });
 
   return (
     <button
@@ -40,5 +40,5 @@ export default function Tile(props: Props) {
     >
       {isOpen && children}
     </button>
-  )
+  );
 }

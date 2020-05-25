@@ -16,7 +16,7 @@ import {
   startNewGame as startNewGameAction,
 } from 'flux/modules/field';
 import {
-  selectIsMatchNotification
+  selectIsMatchNotification,
 } from 'flux/modules/notifications';
 
 import css from './index.module.scss';
@@ -34,23 +34,21 @@ interface Props {
 }
 
 function parseNotification(
-  notification: MatchNotifications
+  notification: MatchNotifications,
 ): string | undefined {
   if (notification === MatchNotifications.Match) {
-    return 'You guessed!'
+    return 'You guessed!';
   }
 
   if (notification === MatchNotifications.NotMatch) {
-    return 'Fail. Try again, please'
+    return 'Fail. Try again, please';
   }
-
-  return
 }
 
 const defaultValues = [
   css.red, css.green, css.yellow,
-  css.purple, css.grey, css.azure
-]
+  css.purple, css.grey, css.azure,
+];
 function Game(props: Props) {
   const {
     round,
@@ -61,11 +59,11 @@ function Game(props: Props) {
   } = props;
 
   useEffect(() => {
-    initField(defaultValues)
-  }, [initField])
+    initField(defaultValues);
+  }, [initField]);
 
   const onStartNewGame = ($event: SyntheticEvent) => {
-    $event.preventDefault()
+    $event.preventDefault();
     const target = $event.target as typeof $event.target & {
       width: { value: string };
       height: { value: string };
@@ -74,9 +72,9 @@ function Game(props: Props) {
     startNewGame(
       defaultValues,
       parseInt(target.width.value, 10),
-      parseInt(target.height.value, 10)
-    )
-  }
+      parseInt(target.height.value, 10),
+    );
+  };
 
   return (
     <div className={css.game}>
@@ -88,7 +86,7 @@ function Game(props: Props) {
           </span>
         )}
         {notification && (
-          <span>{ parseNotification(notification) }</span>          
+          <span>{ parseNotification(notification) }</span>
         )}
       </h5>
 
@@ -128,27 +126,28 @@ function Game(props: Props) {
         </button>
       </form>
     </div>
-  )
+  );
 }
 
 const mapStateToProps = (state: RootState) => ({
   round: selectRound(state),
   tilesLeft: selectLeftTiles(state),
   notification: selectIsMatchNotification(state),
-})
+});
 const mapDispatchToProps = (
-  dispatch: ThunkDispatch<RootState, void, Action>
+  dispatch: ThunkDispatch<RootState, void, Action>,
 ) => ({
-  initField: (values: TileValue[]) =>
-    dispatch(initFieldAction(values)),
+  initField: (
+    values: TileValue[],
+  ) => dispatch(initFieldAction(values)),
   startNewGame: (
     values: TileValue[],
     width?: number,
-    height?: number
-  ) => dispatch(startNewGameAction(values, width, height))
-})
+    height?: number,
+  ) => dispatch(startNewGameAction(values, width, height)),
+});
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
-)(Game)
+  mapDispatchToProps,
+)(Game);

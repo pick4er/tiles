@@ -1,7 +1,5 @@
-import compareArrays from './compareArrays'
-import isUndefined from './isUndefined'
+import compareArrays from './compareArrays';
 
 export {
   compareArrays,
-  isUndefined
-}
+};

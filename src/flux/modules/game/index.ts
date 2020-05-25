@@ -14,48 +14,48 @@ interface Action {
 }
 
 // Actions
-const SET_ROUND = 'GAME/SET_ROUND'
+const SET_ROUND = 'GAME/SET_ROUND';
 
 const initialState: State = {
   round: 1,
-}
+};
 
 // Reducer
 export default function reducer(
   state: State = initialState,
-  { type, payload }: Action
+  { type, payload }: Action,
 ) {
   switch (type) {
     case SET_ROUND:
       return {
         ...state,
-        round: payload
-      }
+        round: payload,
+      };
     default:
-      return state
+      return state;
   }
 }
 
 // Selectors
-const selectGameModule = (state: RootState) => state.game
+const selectGameModule = (state: RootState) => state.game;
 
 export const selectRound = createSelector(
   selectGameModule,
-  ({ round }): number => round
-)
+  ({ round }): number => round,
+);
 
 // Action creators
 export const setRound = (
-  payload: number
+  payload: number,
 ): PayloadAction => ({
   type: SET_ROUND,
-  payload
-})
+  payload,
+});
 
 // Middleware
 export const updateRound: ActionCreator<
-  // types: return, root state, extra args, action
-  ThunkAction<void, RootState, void, PayloadAction>
+// types: return, root state, extra args, action
+ThunkAction<void, RootState, void, PayloadAction>
 > = () => (dispatch, getState) => {
-  dispatch(setRound(selectRound(getState()) + 1))
-}
+  dispatch(setRound(selectRound(getState()) + 1));
+};

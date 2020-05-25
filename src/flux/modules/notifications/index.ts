@@ -6,113 +6,109 @@ import type {
 } from 'flux/types';
 
 import { createSelector } from 'reselect';
-import { MatchNotifications }  from 'flux/types';
+import { MatchNotifications } from 'flux/types';
 
 interface State {
   isMatchNotification?: MatchNotifications;
   isMatchTimer?: any;
 }
 
-const SET_IS_MATCH_NOTIFICATION =
-  'NOTIFICATIONS/SET_IS_MATCH_NOTIFICATION'
-const SET_IS_MATCH_TIMER =
-  'NOTIFICATIONS/SET_IS_MATCH_TIMER'
+const SET_IS_MATCH_NOTIFICATION = 'NOTIFICATIONS/SET_IS_MATCH_NOTIFICATION';
+const SET_IS_MATCH_TIMER = 'NOTIFICATIONS/SET_IS_MATCH_TIMER';
 
 const initialState: State = {
   isMatchNotification: undefined,
-  isMatchTimer: undefined
-}
+  isMatchTimer: undefined,
+};
 
 export default function reducer(
   state: State = initialState,
-  { type, payload }: PayloadAction
+  { type, payload }: PayloadAction,
 ) {
   switch (type) {
     case SET_IS_MATCH_NOTIFICATION:
       return {
         ...state,
-        isMatchNotification: payload
-      }
+        isMatchNotification: payload,
+      };
     case SET_IS_MATCH_TIMER:
       return {
         ...state,
-        isMatchTimer: payload
-      }
+        isMatchTimer: payload,
+      };
     default:
-      return state
+      return state;
   }
 }
 
 // Selector
-const notificationsModule = (state: RootState) =>
-  state.notifications
+const notificationsModule = (state: RootState) => state.notifications;
 
 export const selectIsMatchNotification = createSelector(
   notificationsModule,
-  ({ isMatchNotification }): MatchNotifications | undefined =>
-    isMatchNotification
-)
+  ({ isMatchNotification }): MatchNotifications | undefined => isMatchNotification,
+);
 
 export const selectIsMatchTimer = createSelector(
   notificationsModule,
-  ({ isMatchTimer }) => isMatchTimer
-)
+  ({ isMatchTimer }) => isMatchTimer,
+);
 
 // Action creators
 export const setIsMatchNotification = (
-  payload: MatchNotifications | undefined
+  payload: MatchNotifications | undefined,
 ): PayloadAction => ({
   type: SET_IS_MATCH_NOTIFICATION,
-  payload
-})
+  payload,
+});
 
 export const setIsMatchTimer = (
-  payload: any | undefined
+  payload: any | undefined,
 ): PayloadAction => ({
   type: SET_IS_MATCH_TIMER,
-  payload
-})
+  payload,
+});
 
 // Middleware
 export const notifyAboutMatch: ActionCreator<
-  ThunkAction<void, RootState, void, PayloadAction>
+ThunkAction<void, RootState, void, PayloadAction>
 > = (isMatch: boolean | undefined) => (
   dispatch,
-  getState
+  getState,
 ) => {
-  let matchNotification: string = ''
+  let matchNotification: string = '';
 
   switch (isMatch) {
     case true:
-      matchNotification = MatchNotifications.Match
-      break
+      matchNotification = MatchNotifications.Match;
+      break;
     case false:
-      matchNotification = MatchNotifications.NotMatch
-      break
+      matchNotification = MatchNotifications.NotMatch;
+      break;
     case undefined:
-      matchNotification = MatchNotifications.PartiallyMatch
-      break
+      matchNotification = MatchNotifications.PartiallyMatch;
+      break;
     default:
-      throw new TypeError(`Cannot notify about match status with ${isMatch} value`)
+      throw new TypeError(`Cannot notify about match status with ${isMatch} value`);
   }
 
   dispatch(setIsMatchNotification(
-    matchNotification as MatchNotifications
-  ))
+    matchNotification as MatchNotifications,
+  ));
   // TODO: rewrite on sagas
   setTimeout(() => {
-    dispatch(setIsMatchNotification(undefined))
-  }, 2000)
-}
+    dispatch(setIsMatchNotification(undefined));
+  }, 2000);
+};
 
 export const cancelMatchNotification: ActionCreator<
-  ThunkAction<void, RootState, void, PayloadAction>
+ThunkAction<void, RootState, void, PayloadAction>
 > = () => (dispatch, getState) => {
-  const isMatchNotification = selectIsMatchNotification(getState())
+  const isMatchNotification = selectIsMatchNotification(getState());
   if (typeof isMatchNotification === 'undefined') {
-    return
+    return;
   }
 
-  dispatch(setIsMatchTimer(undefined))
-  dispatch(setIsMatchNotification(undefined))
-}
+  dispatch(setIsMatchTimer(undefined));
+  dispatch(setIsMatchNotification(undefined));
+};

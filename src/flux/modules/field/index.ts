@@ -12,7 +12,7 @@ import { compareArrays } from 'helpers';
 import { updateRound, setRound } from 'flux/modules/game';
 import {
   notifyAboutMatch,
-  cancelMatchNotification
+  cancelMatchNotification,
 } from 'flux/modules/notifications';
 
 interface State {
@@ -24,12 +24,12 @@ interface State {
 }
 
 // Actions
-const SET_TILES = 'FIELD/SET_TILES'
-const SET_WIDTH = 'FIELD/SET_WIDTH'
-const SET_HEIGHT = 'FIELD/SET_HEIGHT'
-const SET_IDS_TO_MATCH = 'FIELD/SET_IDS_TO_MATCH'
-const SET_VALUES_TO_IDS = 'FIELD/SET_VALUES_TO_IDS'
-const RESET_STATE = 'FIELD/RESET_STATE'
+const SET_TILES = 'FIELD/SET_TILES';
+const SET_WIDTH = 'FIELD/SET_WIDTH';
+const SET_HEIGHT = 'FIELD/SET_HEIGHT';
+const SET_IDS_TO_MATCH = 'FIELD/SET_IDS_TO_MATCH';
+const SET_VALUES_TO_IDS = 'FIELD/SET_VALUES_TO_IDS';
+const RESET_STATE = 'FIELD/RESET_STATE';
 
 const initialState: State = {
   width: undefined,
@@ -37,84 +37,82 @@ const initialState: State = {
   tiles: undefined,
   valuesToIds: {},
   idsToMatch: [],
-}
+};
 
 // Reducer
 export default function reducer(
   state: State = initialState,
-  { type, payload }: PayloadAction
+  { type, payload }: PayloadAction,
 ) {
   switch (type) {
     case SET_TILES:
       return {
         ...state,
-        tiles: payload
-      }
+        tiles: payload,
+      };
     case SET_IDS_TO_MATCH:
       return {
         ...state,
-        idsToMatch: payload
-      }
+        idsToMatch: payload,
+      };
     case SET_VALUES_TO_IDS:
       return {
         ...state,
-        valuesToIds: payload
-      }
+        valuesToIds: payload,
+      };
     case SET_WIDTH:
       return {
         ...state,
-        width: payload
-      }
+        width: payload,
+      };
     case SET_HEIGHT:
       return {
         ...state,
-        height: payload
-      }
+        height: payload,
+      };
     case RESET_STATE:
       return {
-        ...initialState
-      }
+        ...initialState,
+      };
     default:
-      return state
+      return state;
   }
 }
 
 // Selectors
-const selectFieldModule = (state: RootState) => state.field
+const selectFieldModule = (state: RootState) => state.field;
 
 export const selectWidth = createSelector(
   selectFieldModule,
-  ({ width }): number | undefined => width
-)
+  ({ width }): number | undefined => width,
+);
 
 export const selectHeight = createSelector(
   selectFieldModule,
-  ({ height }): number | undefined => height
-)
+  ({ height }): number | undefined => height,
+);
 
 export const selectIdsToMatch = createSelector(
   selectFieldModule,
-  ({ idsToMatch }): TileId[] => idsToMatch
-)
+  ({ idsToMatch }): TileId[] => idsToMatch,
+);
 
 export const selectTiles = createSelector(
   selectFieldModule,
-  ({ tiles }): OpenableTile[] | undefined => tiles
-)
+  ({ tiles }): OpenableTile[] | undefined => tiles,
+);
 
 export const selectValuesToIds = createSelector(
   selectFieldModule,
-  ({ valuesToIds }): Record<TileValue, TileId[]> =>
-    valuesToIds
-)
+  ({ valuesToIds }): Record<TileValue, TileId[]> => valuesToIds,
+);
 
 export const selectTilesIds = createSelector(
   selectTiles,
-  (tiles): TileId[] => 
-    typeof tiles === 'undefined'
-      ? []
-      : tiles.map(({ id }: OpenableTile) => id)
-)
+  (tiles): TileId[] => (typeof tiles === 'undefined'
+    ? []
+    : tiles.map(({ id }: OpenableTile) => id)),
+);
 
 export const selectTwoDimensionalTiles = createSelector(
   selectTiles,
@@ -124,41 +122,41 @@ export const selectTwoDimensionalTiles = createSelector(
     const twoDimensionalTiles: (OpenableTile[])[] = [];
 
     if (
-      typeof width === 'undefined' ||
-      typeof height === 'undefined' ||
-      typeof tiles === 'undefined'
+      typeof width === 'undefined'
+      || typeof height === 'undefined'
+      || typeof tiles === 'undefined'
     ) {
-      return twoDimensionalTiles
+      return twoDimensionalTiles;
     }
 
     for (let h = 0; h < height; h++) {
       const rowTiles: OpenableTile[] = [];
 
       for (let w = 0; w < width; w++) {
-        rowTiles.push(tiles[w + (h * width)])
+        rowTiles.push(tiles[w + (h * width)]);
       }
 
-      twoDimensionalTiles.push(rowTiles)
+      twoDimensionalTiles.push(rowTiles);
     }
 
-    return twoDimensionalTiles
-  }
-)
+    return twoDimensionalTiles;
+  },
+);
 
 export const selectIdsToValues = createSelector(
   selectValuesToIds,
   (valuesToIds): Record<TileId, TileValue> => {
-    const idsToValues: Record<TileId, TileValue> = {}
+    const idsToValues: Record<TileId, TileValue> = {};
 
-    for (let value of Object.keys(valuesToIds)) {
-      for (let identifier of valuesToIds[value]) {
-        idsToValues[identifier] = value as TileValue
+    for (const value of Object.keys(valuesToIds)) {
+      for (const identifier of valuesToIds[value]) {
+        idsToValues[identifier] = value as TileValue;
       }
     }
 
-    return idsToValues
-  }
-)
+    return idsToValues;
+  },
+);
 
 export const selectTilesOfCurrentValue = createSelector(
   selectIdsToMatch,
@@ -167,26 +165,26 @@ export const selectTilesOfCurrentValue = createSelector(
   (selectedTilesIds, valuesToIds, idsToValues): TileId[] | undefined => {
     const value = idsToValues[
       selectedTilesIds[0]
-    ] as TileValue | undefined
+    ] as TileValue | undefined;
     if (typeof value === 'undefined') {
-      return undefined
+      return undefined;
     }
 
-    return valuesToIds[value]
-  }
-)
+    return valuesToIds[value];
+  },
+);
 
 export const selectLeftTiles = createSelector(
   selectTilesOfCurrentValue,
   selectIdsToMatch,
   (sameValueTiles, tilesSelected): number | undefined => {
     if (typeof sameValueTiles === 'undefined') {
-      return undefined
+      return undefined;
     }
 
-    return sameValueTiles.length - tilesSelected.length
-  }
-)
+    return sameValueTiles.length - tilesSelected.length;
+  },
+);
 
 export const selectIsMatch = createSelector(
   selectIdsToValues,
@@ -194,107 +192,107 @@ export const selectIsMatch = createSelector(
   selectIdsToMatch,
   (idsToValues, valuesToIds, ids): boolean | undefined => {
     if (ids.length === 0) {
-      return undefined
+      return undefined;
     }
 
     return compareArrays(
       ids,
-      valuesToIds[idsToValues[ids[0]]]
-    )
-  }
-)
+      valuesToIds[idsToValues[ids[0]]],
+    );
+  },
+);
 
 // Action creators
 export const setTiles = (
-  payload: OpenableTile[]
+  payload: OpenableTile[],
 ): PayloadAction => ({
   type: SET_TILES,
-  payload
-})
+  payload,
+});
 
 export const setIdsToMatch = (
-  payload: TileId[]
+  payload: TileId[],
 ): PayloadAction => ({
   type: SET_IDS_TO_MATCH,
-  payload
-})
+  payload,
+});
 
 export const setValuesToIds = (
-  payload: Record<TileValue, TileId[]>
+  payload: Record<TileValue, TileId[]>,
 ): PayloadAction => ({
   type: SET_VALUES_TO_IDS,
-  payload
-})
+  payload,
+});
 
 export const setWidth = (
-  payload: number
+  payload: number,
 ): PayloadAction => ({
   type: SET_WIDTH,
-  payload
-})
+  payload,
+});
 
 export const setHeight = (
-  payload: number
+  payload: number,
 ): PayloadAction => ({
   type: SET_HEIGHT,
-  payload
-})
+  payload,
+});
 
 export const resetState = (): Action => ({
-  type: RESET_STATE
-})
+  type: RESET_STATE,
+});
 
 // Middleware
 export const initTiles: ActionCreator<
-  // types: return, root state, extra args, action
-  ThunkAction<void, RootState, void, PayloadAction>
+// types: return, root state, extra args, action
+ThunkAction<void, RootState, void, PayloadAction>
 > = () => (dispatch, getState) => {
-  const state: RootState = getState()
-  const width = selectWidth(state)
-  const height = selectHeight(state)
+  const state: RootState = getState();
+  const width = selectWidth(state);
+  const height = selectHeight(state);
 
   if (
-    typeof width === 'undefined' ||
-    typeof height === 'undefined'
+    typeof width === 'undefined'
+    || typeof height === 'undefined'
   ) {
-    throw new TypeError('Specify field dimensions first')
+    throw new TypeError('Specify field dimensions first');
   }
 
-  const tiles: OpenableTile[] = []
+  const tiles: OpenableTile[] = [];
   for (let id = 0; id < width * height; id++) {
-    tiles.push({ id, isOpen: false })
+    tiles.push({ id, isOpen: false });
   }
 
-  dispatch<PayloadAction>(setTiles(tiles))
-}
+  dispatch<PayloadAction>(setTiles(tiles));
+};
 
 export const initValuesToIds: ActionCreator<
-  ThunkAction<void, RootState, void, PayloadAction>
+ThunkAction<void, RootState, void, PayloadAction>
 > = (values: TileValue[]) => (dispatch, getState) => {
-  const tilesIds = selectTilesIds(getState())
-  const valuesToIds: Record<TileValue, TileId[]> = {}
+  const tilesIds = selectTilesIds(getState());
+  const valuesToIds: Record<TileValue, TileId[]> = {};
 
   let valueId = 0;
   let identifierId = 0;
   while (identifierId < tilesIds.length) {
-    const value = values[valueId]
-    const firstIdentifier = tilesIds[identifierId]
-    const secondIdentifier = tilesIds[identifierId + 1]
+    const value = values[valueId];
+    const firstIdentifier = tilesIds[identifierId];
+    const secondIdentifier = tilesIds[identifierId + 1];
 
     if (!valuesToIds[value]) {
-      valuesToIds[value] = []
+      valuesToIds[value] = [];
     }
 
     // out of ids range
     if (typeof secondIdentifier === 'undefined') {
       // identifier must have a value couple
       valuesToIds[value] = valuesToIds[value].concat(
-        firstIdentifier
-      )
+        firstIdentifier,
+      );
     } else {
       valuesToIds[value] = valuesToIds[value].concat([
-        firstIdentifier, secondIdentifier
-      ])
+        firstIdentifier, secondIdentifier,
+      ]);
     }
 
     valueId += 1;
@@ -305,96 +303,93 @@ export const initValuesToIds: ActionCreator<
     identifierId += 2; // two tiles at least
   }
 
-  dispatch(setValuesToIds(valuesToIds))
-}
+  dispatch(setValuesToIds(valuesToIds));
+};
 
 export const mixTiles: ActionCreator<
-  ThunkAction<void, RootState, void, PayloadAction>
+ThunkAction<void, RootState, void, PayloadAction>
 > = () => (dispatch, getState) => {
-  const tiles: OpenableTile[] =
-    JSON.parse(JSON.stringify(selectTiles(getState())))
+  const tiles: OpenableTile[] = JSON.parse(JSON.stringify(selectTiles(getState())));
 
   for (let i = tiles.length - 1; i > 0; i--) {
     const j = Math.floor(
-      Math.random() * (i + 1)
-    ) as number
+      Math.random() * (i + 1),
+    ) as number;
 
-    [tiles[i], tiles[j]] =
-      [tiles[j], tiles[i]]
+    [tiles[i], tiles[j]] = [tiles[j], tiles[i]];
   }
 
-  dispatch(setTiles(tiles))
-}
+  dispatch(setTiles(tiles));
+};
 
 export const openTile: ActionCreator<
-  ThunkAction<void, RootState, void, PayloadAction>
+ThunkAction<void, RootState, void, PayloadAction>
 > = (tileId: TileId) => (dispatch, getState) => {
   const tiles = JSON.parse(JSON.stringify(
-    selectTiles(getState())
-  ))
+    selectTiles(getState()),
+  ));
   const tile = tiles.find(
-    ({ id }: OpenableTile) => id === tileId
-  ) as OpenableTile
+    ({ id }: OpenableTile) => id === tileId,
+  ) as OpenableTile;
   if (tile.isOpen) {
-    return
+    return;
   }
 
-  tile.isOpen = true
-  const nextIdsToMatch: TileId[] = 
-    selectIdsToMatch(getState()).concat(tileId)
+  tile.isOpen = true;
+  const nextIdsToMatch: TileId[] = selectIdsToMatch(getState()).concat(tileId);
 
-  dispatch(cancelMatchNotification())
-  dispatch(setIdsToMatch(nextIdsToMatch))
+  dispatch(cancelMatchNotification());
+  dispatch(setIdsToMatch(nextIdsToMatch));
 
-  const isMatch = selectIsMatch(getState())
+  const isMatch = selectIsMatch(getState());
   if (isMatch === false) {
     // close all selected tiles for this round
-    nextIdsToMatch.forEach(_id => {
+    nextIdsToMatch.forEach((_id) => {
       const tileToClose = tiles.find(
-        ({ id }: OpenableTile) => id === _id
-      )
-      tileToClose.isOpen = false
-    })
+        ({ id }: OpenableTile) => id === _id,
+      );
+      tileToClose.isOpen = false;
+    });
 
     // nevertheless, open clicked tile
-    tile.isOpen = true
-    dispatch(setIdsToMatch([tileId]))
+    tile.isOpen = true;
+    dispatch(setIdsToMatch([tileId]));
 
-    dispatch(setTiles(tiles))
-    dispatch(updateRound())
-    dispatch(notifyAboutMatch(isMatch))
+    dispatch(setTiles(tiles));
+    dispatch(updateRound());
+    dispatch(notifyAboutMatch(isMatch));
   } else if (isMatch === true) {
-    dispatch(setIdsToMatch([]))
-    dispatch(setTiles(tiles))
-    dispatch(notifyAboutMatch(isMatch))
+    dispatch(setIdsToMatch([]));
+    dispatch(setTiles(tiles));
+    dispatch(notifyAboutMatch(isMatch));
   } else if (typeof isMatch === 'undefined') {
-    dispatch(setTiles(tiles))
+    dispatch(setTiles(tiles));
   }
-}
+};
 
 export const initField: ActionCreator<
-  ThunkAction<void, RootState, void, PayloadAction>
+ThunkAction<void, RootState, void, PayloadAction>
 > = (
   values: TileValue[],
   width?: number,
-  height?: number
-) => dispatch => {
-  dispatch(setHeight(width || 4))
-  dispatch(setWidth(height || 4))
-  dispatch(initTiles())
-  dispatch(initValuesToIds(values))
-  dispatch(mixTiles())
-}
+  height?: number,
+) => (dispatch) => {
+  dispatch(setHeight(width || 4));
+  dispatch(setWidth(height || 4));
+  dispatch(initTiles());
+  dispatch(initValuesToIds(values));
+  dispatch(mixTiles());
+};
 
 export const startNewGame: ActionCreator<
-  ThunkAction<void, RootState, void, PayloadAction>
+ThunkAction<void, RootState, void, PayloadAction>
 > = (
   values: TileValue[],
   width?: number,
-  height?: number
-) => dispatch => {
-  dispatch(cancelMatchNotification())
-  dispatch(setRound(1))
-  dispatch(resetState())
-  dispatch(initField(values, width, height))
-}
+  height?: number,
+) => (dispatch) => {
+  dispatch(cancelMatchNotification());
+  dispatch(setRound(1));
+  dispatch(resetState());
+  dispatch(initField(values, width, height));
+};

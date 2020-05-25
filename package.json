@@ -16,6 +16,8 @@
     "typescript": "^3.9.3"
   },
   "scripts": {
+    "lint": "yarn eslint src/ --ext .js,.jsx,.ts,.tsx",
+    "lint-fix": "yarn eslint src/ --ext .js,.jsx,.ts,.tsx --fix",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -48,6 +50,12 @@
     "@types/react-dom": "^16.9.0",
     "@types/react-redux": "^7.1.9",
     "@types/redux-thunk": "^2.1.0",
-    "@types/reselect": "^2.2.0"
+    "@types/reselect": "^2.2.0",
+    "@typescript-eslint/eslint-plugin": "^3.0.0",
+    "eslint": "^7.1.0",
+    "eslint-config-airbnb-typescript": "^7.2.1",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-react": "^7.20.0"
   }
 }

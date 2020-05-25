@@ -4,8 +4,8 @@ import type { Action } from 'redux';
 import type {
   OpenableTile,
   TileValue,
-  TileId
-} from 'types'
+  TileId,
+} from 'types';
 
 import React from 'react';
 import { connect } from 'react-redux';
@@ -16,10 +16,10 @@ import {
   selectIdsToMatch,
   selectIdsToValues,
   selectTwoDimensionalTiles,
-  openTile as openTileAction
+  openTile as openTileAction,
 } from 'flux/modules/field';
 
-import css from './index.module.scss'
+import css from './index.module.scss';
 
 interface Props {
   tiles: (OpenableTile[])[];
@@ -33,8 +33,8 @@ function Field(props: Props) {
     tiles,
     values,
     openTile,
-    idsToMatch
-  } = props
+    idsToMatch,
+  } = props;
 
   return (
     <table className={css.field}>
@@ -48,8 +48,8 @@ function Field(props: Props) {
                   isOpen={isOpen}
                   onClick={openTile}
                   className={cx({
-                    [css.quessed]: isOpen
-                      && idsToMatch.indexOf(id) === -1
+                    [css.guessed]: isOpen
+                      && idsToMatch.indexOf(id) === -1,
                   })}
                 >
                   <div className={cx({
@@ -63,22 +63,21 @@ function Field(props: Props) {
         ))}
       </tbody>
     </table>
-  )
+  );
 }
 
 const mapStateToProps = (state: RootState) => ({
   values: selectIdsToValues(state),
   idsToMatch: selectIdsToMatch(state),
   tiles: selectTwoDimensionalTiles(state),
-})
+});
 const mapDispatchToProps = (
-  dispatch: ThunkDispatch<RootState, void, Action>
+  dispatch: ThunkDispatch<RootState, void, Action>,
 ) => ({
-  openTile: (id: TileId) => 
-    dispatch(openTileAction(id)),
-})
+  openTile: (id: TileId) => dispatch(openTileAction(id)),
+});
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
-)(Field)
+  mapDispatchToProps,
+)(Field);
