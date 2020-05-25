@@ -1,4 +1,4 @@
-import type { ActionCreator } from 'redux';
+import type { ActionCreator, Action } from 'redux';
 import type { ThunkAction } from 'redux-thunk';
 import type { RootState, PayloadAction } from 'flux/types';
 import type {
@@ -9,7 +9,7 @@ import type {
 
 import { createSelector } from 'reselect';
 import { compareArrays } from 'helpers';
-import { updateRound } from 'flux/modules/game';
+import { updateRound, setRound } from 'flux/modules/game';
 import {
   notifyAboutMatch,
   cancelMatchNotification
@@ -29,6 +29,7 @@ const SET_WIDTH = 'FIELD/SET_WIDTH'
 const SET_HEIGHT = 'FIELD/SET_HEIGHT'
 const SET_IDS_TO_MATCH = 'FIELD/SET_IDS_TO_MATCH'
 const SET_VALUES_TO_IDS = 'FIELD/SET_VALUES_TO_IDS'
+const RESET_STATE = 'FIELD/RESET_STATE'
 
 const initialState: State = {
   width: undefined,
@@ -68,6 +69,10 @@ export default function reducer(
       return {
         ...state,
         height: payload
+      }
+    case RESET_STATE:
+      return {
+        ...initialState
       }
     default:
       return state
@@ -235,6 +240,10 @@ export const setHeight = (
   payload
 })
 
+export const resetState = (): Action => ({
+  type: RESET_STATE
+})
+
 // Middleware
 export const initTiles: ActionCreator<
   // types: return, root state, extra args, action
@@ -361,10 +370,27 @@ export const openTile: ActionCreator<
 
 export const initField: ActionCreator<
   ThunkAction<void, RootState, void, PayloadAction>
-> = (values: TileValue[]) => dispatch => {
-  dispatch(setHeight(4))
-  dispatch(setWidth(4))
+> = (
+  values: TileValue[],
+  width?: number,
+  height?: number
+) => dispatch => {
+  dispatch(setHeight(width || 4))
+  dispatch(setWidth(height || 4))
   dispatch(initTiles())
   dispatch(initValuesToIds(values))
   dispatch(mixTiles())
+}
+
+export const startNewGame: ActionCreator<
+  ThunkAction<void, RootState, void, PayloadAction>
+> = (
+  values: TileValue[],
+  width?: number,
+  height?: number
+) => dispatch => {
+  dispatch(cancelMatchNotification())
+  dispatch(setRound(1))
+  dispatch(resetState())
+  dispatch(initField(values, width, height))
 }

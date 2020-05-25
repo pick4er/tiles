@@ -13,6 +13,7 @@ import cx from 'classnames';
 
 import Tile from 'components/Tile';
 import {
+  selectIdsToMatch,
   selectIdsToValues,
   selectTwoDimensionalTiles,
   openTile as openTileAction
@@ -22,6 +23,7 @@ import css from './index.module.scss'
 
 interface Props {
   tiles: (OpenableTile[])[];
+  idsToMatch: TileId[];
   values: Record<TileId, TileValue>;
   openTile: (id: TileId) => void;
 }
@@ -31,36 +33,42 @@ function Field(props: Props) {
     tiles,
     values,
     openTile,
+    idsToMatch
   } = props
 
   return (
-    <div className={css.field}>
-      {tiles.map((tilesRow, row) =>
-        tilesRow.map(({ id, isOpen }, column) =>
-          <Tile
-            id={id}
-            key={id}
-            isOpen={isOpen}
-            onClick={openTile}
-            style={{
-              // indexing from 0, grid from 1
-              gridRow: row + 1,
-              gridColumn: column + 1
-            }}
-          >
-            <div className={cx({
-              [values[id] as TileValue]: true,
-              [css.value]: true,
-            })} />
-          </Tile>
-        )
-      )}
-    </div>
+    <table className={css.field}>
+      <tbody>
+        {tiles.map((tilesRow, row) => (
+          <tr key={row}>
+            {tilesRow.map(({ id, isOpen }) => (
+              <td key={id}>
+                <Tile
+                  id={id}
+                  isOpen={isOpen}
+                  onClick={openTile}
+                  className={cx({
+                    [css.quessed]: isOpen
+                      && idsToMatch.indexOf(id) === -1
+                  })}
+                >
+                  <div className={cx({
+                    [values[id] as TileValue]: true,
+                    [css.value]: true,
+                  })} />
+                </Tile>
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
   )
 }
 
 const mapStateToProps = (state: RootState) => ({
   values: selectIdsToValues(state),
+  idsToMatch: selectIdsToMatch(state),
   tiles: selectTwoDimensionalTiles(state),
 })
 const mapDispatchToProps = (

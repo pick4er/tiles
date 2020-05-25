@@ -4,9 +4,12 @@ import type { TileId } from 'types';
 import React from 'react';
 import cx from 'classnames';
 
+import css from './index.module.scss';
+
 interface Props {
   id: TileId;
   isOpen: boolean;
+  className?: string;
   onClick(id: TileId): void;
   style?: CSSProperties;
   children?: ReactNode;
@@ -18,12 +21,14 @@ export default function Tile(props: Props) {
     style,
     isOpen,
     onClick,
-    children
+    children,
+    className,
   } = props;
 
   const classNames = cx({
-    tile: true,
-    open: isOpen
+    [css.tile]: true,
+    [css.open]: isOpen,
+    [className || '']: className
   })
 
   return (
