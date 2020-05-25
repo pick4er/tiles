@@ -8,7 +8,12 @@
   padding: 0;
   background-color: RGBA(255, 179, 71, 1);
 
-  &:hover {
+  &:not(.disabled):hover {
     background-color: RGBA(255, 179, 71, 0.8);
   }
+}
+
+.disabled {
+  cursor: auto;
+  opacity: 0.4;
 }

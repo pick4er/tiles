@@ -14,9 +14,16 @@ import type {
 
 import { createSelector } from 'reselect';
 import { compareArrays } from 'helpers';
-import { updateRound, setRound } from 'flux/modules/game';
 import {
+  setRound,
+  updateRound,
+  selectRound,
+  GAME_OVER_ROUNDS_THRESHOLD,
+} from 'flux/modules/game';
+import {
+  notifyAboutWin,
   notifyAboutMatch,
+  cancelWinNotification,
   cancelMatchNotification,
 } from 'flux/modules/notifications';
 
@@ -211,6 +218,41 @@ export const selectIsMatch = createSelector(
   },
 );
 
+export const selectClosedTiles = createSelector(
+  selectTiles,
+  (tiles): OpenableTile[] => {
+    if (typeof tiles === 'undefined') {
+      return []
+    }
+
+    const closedTiles = tiles.filter(
+      ({ isOpen }: OpenableTile) => !isOpen
+    )
+
+    return closedTiles
+  }
+)
+
+export const selectIsAllTilesOpen = createSelector(
+  selectClosedTiles,
+  (closedTiles): boolean => closedTiles.length === 0
+)
+
+export const selectIsGameOver = createSelector(
+  selectIsAllTilesOpen,
+  selectRound,
+  (isAllTilesOpen, round): boolean => {
+    if (
+      round > GAME_OVER_ROUNDS_THRESHOLD &&
+      !isAllTilesOpen
+    ) {
+      return true
+    } 
+
+    return false
+  }
+)
+
 // Action creators
 export const setTiles = (
   payload: OpenableTile[],
@@ -380,10 +422,21 @@ ThunkAction<void, RootState, void, PayloadAction>
 
     dispatch(setTiles(tiles));
     dispatch(updateRound());
-    dispatch(notifyAboutMatch(isMatch));
+
+    if (selectIsGameOver(getState())) {
+      dispatch(notifyAboutWin(false))
+    } else {
+      dispatch(notifyAboutMatch(isMatch));
+    }
   } else if (isMatch === true) {
     dispatch(setIdsToMatch([]));
     dispatch(setTiles(tiles));
+    const isAllTilesOpen = selectIsAllTilesOpen(getState())
+
+    if (isAllTilesOpen) {
+      dispatch(notifyAboutWin(true))
+    }
+
     dispatch(notifyAboutMatch(isMatch));
   } else if (typeof isMatch === 'undefined') {
     dispatch(setTiles(tiles));
@@ -414,6 +467,7 @@ ThunkAction<void, RootState, void, PayloadAction>
   height?: number,
 ) => (dispatch: Dispatch): void => {
   dispatch(cancelMatchNotification());
+  dispatch(cancelWinNotification());
   dispatch(setRound(1));
   dispatch(resetState());
   dispatch(initField(values, width, height));

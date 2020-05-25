@@ -13,6 +13,8 @@ export interface GetState {
   (): RootState;
 }
 
+export type Timeout = ReturnType<typeof setTimeout>
+
 export type Dispatch = ThunkDispatch<
   RootState,
   void,
@@ -23,4 +25,9 @@ export enum MatchNotifications {
   Match = 'MATCH',
   NotMatch = 'NOT_MATCH',
   PartiallyMatch = 'PARTIALLY_MATCH',
+}
+
+export enum WinNotifications {
+  Win = 'WIN',
+  Loose = 'TRY_AGAIN',
 }

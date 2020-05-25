@@ -13,6 +13,7 @@ import cx from 'classnames';
 
 import Tile from 'components/Tile';
 import {
+  selectIsGameOver,
   selectIdsToMatch,
   selectIdsToValues,
   selectTwoDimensionalTiles,
@@ -24,6 +25,7 @@ import css from './index.module.scss';
 interface Props {
   tiles: (OpenableTile[])[];
   idsToMatch: TileId[];
+  isGameOver: boolean;
   values: Record<TileId, TileValue>;
   openTile: (id: TileId) => void;
 }
@@ -33,6 +35,7 @@ function Field(props: Props) {
     tiles,
     values,
     openTile,
+    isGameOver,
     idsToMatch,
   } = props;
 
@@ -48,6 +51,7 @@ function Field(props: Props) {
                   id={id}
                   isOpen={isOpen}
                   onClick={openTile}
+                  disabled={isGameOver}
                   className={cx({
                     [css.guessed]: isOpen
                       && idsToMatch.indexOf(id) === -1,
@@ -71,6 +75,7 @@ const mapStateToProps = (state: RootState) => ({
   values: selectIdsToValues(state),
   idsToMatch: selectIdsToMatch(state),
   tiles: selectTwoDimensionalTiles(state),
+  isGameOver: selectIsGameOver(state),
 });
 const mapDispatchToProps = (
   dispatch: ThunkDispatch<RootState, void, Action>,
