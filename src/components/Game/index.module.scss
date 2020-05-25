@@ -63,20 +63,8 @@
   background-color: $azure;
 }
 
-.tulipPurple {
-  background-color: #7511A8;
-}
-
-.grey {
-  background-color: #887B6A;
-}
-
 .yellow {
   background-color: #EAE811;
-}
-
-.pink {
-  background-color: #DB585A;
 }
 
 .purple {
@@ -95,10 +83,53 @@
   background-color: #754800;
 }
 
-.avocadoGreen {
-  background-color: #5BEB67;
-}
-
 .oceanBlue {
   background-color: #2A338C;
+}
+
+.horse {
+  background-image: url('../../assets/horse.jpg');
+  background-size: cover;
+}
+
+.catsville {
+  background-image: url('../../assets/catsville.jpg');
+  background-size: cover; 
+  background-position-x: -18px;
+}
+
+.pineapple {
+  background-image: url('../../assets/pineapple.jpg');
+  background-size: cover;
+}
+
+.ie {
+  background-image: url('../../assets/explorer.png');
+  background-size: cover;
+}
+
+.cannot {
+  background-image: url('../../assets/cannot.jpg');
+  background-size: cover;
+  background-position-x: -35px;
+}
+
+.pacha {
+  background-image: url('../../assets/pacha.jpeg');
+  background-size: cover;
+}
+
+.pick4er {
+  background-image: url('../../assets/pick4er.jpg');
+  background-size: cover;
+}
+
+.osensei {
+  background-image: url('../../assets/osensei.png');
+  background-size: cover;
+}
+
+.malachov {
+  background-image: url('../../assets/malachov.jpg');
+  background-size: cover;
 }
