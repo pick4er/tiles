@@ -6,10 +6,14 @@ import type { RootState } from 'flux/types';
 
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
+import cx from 'classnames';
 
 import Field from 'components/Field';
-import { MatchNotifications } from 'flux/types';
 import { selectRound } from 'flux/modules/game';
+import {
+  WinNotifications,
+  MatchNotifications,
+} from 'flux/types';
 import {
   selectLeftTiles,
   initField as initFieldAction,
@@ -17,6 +21,7 @@ import {
 } from 'flux/modules/field';
 import {
   selectIsMatchNotification,
+  selectIsWinNotification
 } from 'flux/modules/notifications';
 
 import css from './index.module.scss';
@@ -24,7 +29,8 @@ import css from './index.module.scss';
 interface Props {
   round: number;
   tilesLeft?: number;
-  notification?: MatchNotifications;
+  matchNotification?: MatchNotifications;
+  winNotification?: WinNotifications;
   initField(values: TileValue[]): void;
   startNewGame(
     values: TileValue[],
@@ -33,8 +39,8 @@ interface Props {
   ): void;
 }
 
-function parseNotification(
-  notification: MatchNotifications,
+function parseMatchNotification(
+  notification: MatchNotifications | undefined,
 ): string | undefined {
   if (notification === MatchNotifications.Match) {
     return 'You guessed!';
@@ -47,16 +53,42 @@ function parseNotification(
   return undefined;
 }
 
+function parseWinNotification(
+  notification: WinNotifications | undefined,
+): string | undefined {
+  if (notification === WinNotifications.Win) {
+    return 'YOU WIN!!!'
+  }
+
+  if (notification === WinNotifications.Loose) {
+    return 'Game over. Try again'
+  }
+
+  return undefined
+}
+
 const defaultValues = [
-  css.red, css.green, css.yellow,
-  css.purple, css.grey, css.azure,
+  css.vinousRed,
+  css.grassGreen,
+  css.azure,
+  css.tulipPurple,
+  css.grey,
+  css.yellow,
+  css.pink,
+  css.purple,
+  css.solidRed,
+  css.babyBlue,
+  css.brown,
+  css.avocadoGreen,
+  css.oceanBlue,
 ];
 function Game(props: Props): ReactElement {
   const {
     round,
     initField,
     tilesLeft,
-    notification,
+    matchNotification,
+    winNotification,
     startNewGame,
   } = props;
 
@@ -80,17 +112,27 @@ function Game(props: Props): ReactElement {
 
   return (
     <div className={css.game}>
-      <h3>Round { round }</h3>
-      <h5>
-        {tilesLeft && (
-          <span>
-            { tilesLeft } tiles left to guess
-          </span>
+      <div className={css.info}>
+        <h3>Round { round }</h3>
+        <h5 className={cx({
+          [css.hidden]: !tilesLeft
+        })}>
+          { tilesLeft } tiles left to guess
+        </h5>
+        {winNotification ? (
+          <h5 className={cx({
+            [css.hidden]: !winNotification 
+          })}>
+            { parseWinNotification(winNotification) }
+          </h5>
+        ) : (
+          <h5 className={cx({
+            [css.hidden]: !matchNotification 
+          })}>
+            { parseMatchNotification(matchNotification) }
+          </h5>
         )}
-        {notification && (
-          <span>{ parseNotification(notification) }</span>
-        )}
-      </h5>
+      </div>
 
       <Field />
 
@@ -99,32 +141,36 @@ function Game(props: Props): ReactElement {
         onSubmit={onStartNewGame}
       >
         <label htmlFor="width">
-          Width (from 1 to 10):
-          <input
-            name="width"
-            placeholder="width"
-            type="number"
-            defaultValue={4}
-            autoComplete="off"
-            min={1}
-            max={10}
-          />
+          <div>
+            Width (from 1 to 10):
+            <input
+              name="width"
+              placeholder="width"
+              type="number"
+              defaultValue={4}
+              autoComplete="off"
+              min={1}
+              max={10}
+            />
+          </div>
         </label>
 
         <label htmlFor="height">
-          Height (from 1 to 10):
-          <input
-            name="height"
-            placeholder="height"
-            type="number"
-            defaultValue={4}
-            autoComplete="off"
-            min={1}
-            max={10}
-          />
+          <div>
+            Height (from 1 to 10):
+            <input
+              name="height"
+              placeholder="height"
+              type="number"
+              defaultValue={4}
+              autoComplete="off"
+              min={1}
+              max={10}
+            />
+          </div>
         </label>
         <button type="submit">
-          Start again
+          Try again
         </button>
       </form>
     </div>
@@ -134,7 +180,8 @@ function Game(props: Props): ReactElement {
 const mapStateToProps = (state: RootState) => ({
   round: selectRound(state),
   tilesLeft: selectLeftTiles(state),
-  notification: selectIsMatchNotification(state),
+  matchNotification: selectIsMatchNotification(state),
+  winNotification: selectIsWinNotification(state),
 });
 const mapDispatchToProps = (
   dispatch: ThunkDispatch<RootState, void, Action>,

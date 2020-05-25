@@ -1,27 +1,48 @@
 @import 'styles';
 
 .game {
-  display: flex;
-  flex-flow: column nowrap;
-  align-items: center;
+  @include alignChildrenCenter();
+
+  .info {
+    max-width: 500px;
+
+    & > * {
+      text-align: center;
+    }
+  }
 
   h5 {
-    height: 14px;
+    height: 16px;
     font-size: 14px;
   }
 
+  .hidden {
+    visibility: hidden;
+  }
+
   form {
+    max-width: 500px;
     margin-top: 20px;
-    display: flex;
-    flex-flow: column;
+
+    @include alignChildrenCenter();
+
+    & > * {
+      display: block;
+    }
+
+    label {
+      div {
+        text-align: center;
+
+        input {
+          max-width: 100px;
+          margin-left: 5px;
+        }
+      }
+    }
 
     label + label {
       margin-top: 5px;
-    }
-
-    input {
-      max-width: 100px;
-      margin-left: 5px;
     }
 
     button[type="submit"] {
@@ -30,26 +51,54 @@
   }
 }
 
-.red {
-  background-color: red;
+.vinousRed {
+  background-color: #A81131;
 }
 
-.green {
-  background-color: green;
+.grassGreen {
+  background-color: #0A7500;
 }
 
 .azure {
   background-color: $azure;
 }
 
-.purple {
-  background-color: purple;
+.tulipPurple {
+  background-color: #7511A8;
 }
 
 .grey {
-  background-color: grey;
+  background-color: #887B6A;
 }
 
 .yellow {
-  background-color: yellow;
+  background-color: #EAE811;
+}
+
+.pink {
+  background-color: #DB585A;
+}
+
+.purple {
+  background-color: #740075;
+}
+
+.solidRed {
+  background-color: #A81113;
+}
+
+.babyBlue {
+  background-color: #10EBDC;
+}
+
+.brown {
+  background-color: #754800;
+}
+
+.avocadoGreen {
+  background-color: #5BEB67;
+}
+
+.oceanBlue {
+  background-color: #2A338C;
 }

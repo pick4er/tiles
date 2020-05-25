@@ -14,6 +14,7 @@ interface Props {
   id: TileId;
   isOpen: boolean;
   className?: string;
+  disabled?: boolean;
   onClick(id: TileId): void;
   style?: CSSProperties;
   children?: ReactNode;
@@ -26,12 +27,14 @@ export default function Tile(props: Props): ReactElement {
     isOpen,
     onClick,
     children,
+    disabled,
     className,
   } = props;
 
   const classNames = cx({
     [css.tile]: true,
     [css.open]: isOpen,
+    [css.disabled]: disabled,
     [className || '']: className,
   });
 
@@ -40,6 +43,7 @@ export default function Tile(props: Props): ReactElement {
       type="button"
       style={style}
       className={classNames}
+      disabled={disabled}
       onClick={() => onClick(id)}
     >
       {isOpen && children}

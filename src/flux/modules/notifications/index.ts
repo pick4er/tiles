@@ -1,6 +1,7 @@
 import type { ActionCreator } from 'redux';
 import type { ThunkAction } from 'redux-thunk';
 import type {
+  Timeout,
   GetState,
   Dispatch,
   RootState,
@@ -8,21 +9,32 @@ import type {
 } from 'flux/types';
 
 import { createSelector } from 'reselect';
-import { MatchNotifications } from 'flux/types';
+import {
+  WinNotifications,
+  MatchNotifications,
+} from 'flux/types';
 
 interface State {
   isMatchNotification?: MatchNotifications;
-  isMatchTimer?: number | string;
+  isWinNotification?: WinNotifications;
+  isMatchTimer?: Timeout;
+  isWinTimer?: Timeout;
 }
 
 const SET_IS_MATCH_NOTIFICATION =
   'NOTIFICATIONS/SET_IS_MATCH_NOTIFICATION';
 const SET_IS_MATCH_TIMER =
   'NOTIFICATIONS/SET_IS_MATCH_TIMER';
+const SET_IS_WIN_NOTIFICATION =
+  'NOTIFICATIONS/SET_IS_WIN_NOTIFICATION';
+const SET_IS_WIN_TIMER =
+  'NOTIFICATIONS/SET_IS_WIN_TIMER';
 
 const initialState: State = {
   isMatchNotification: undefined,
+  isWinNotification: undefined,
   isMatchTimer: undefined,
+  isWinTimer: undefined,
 };
 
 export default function reducer(
@@ -40,6 +52,16 @@ export default function reducer(
         ...state,
         isMatchTimer: payload,
       };
+    case SET_IS_WIN_NOTIFICATION:
+      return {
+        ...state,
+        isWinNotification: payload,
+      }
+    case SET_IS_WIN_TIMER:
+      return {
+        ...state,
+        isWinTimer: payload
+      }
     default:
       return state;
   }
@@ -58,8 +80,21 @@ export const selectIsMatchNotification = createSelector(
 
 export const selectIsMatchTimer = createSelector(
   notificationsModule,
-  ({ isMatchTimer }) => isMatchTimer,
+  ({ isMatchTimer }): Timeout | undefined =>
+    isMatchTimer,
 );
+
+export const selectIsWinNotification = createSelector(
+  notificationsModule,
+  ({ isWinNotification }): WinNotifications | undefined =>
+    isWinNotification,
+)
+
+export const selectIsWinTimer = createSelector(
+  notificationsModule,
+  ({ isWinTimer }): Timeout | undefined =>
+    isWinTimer
+)
 
 // Action creators
 export const setIsMatchNotification = (
@@ -70,13 +105,60 @@ export const setIsMatchNotification = (
 });
 
 export const setIsMatchTimer = (
-  payload: string | number | undefined,
+  payload: Timeout | undefined,
 ): PayloadAction => ({
   type: SET_IS_MATCH_TIMER,
   payload,
 });
 
+export const setIsWinNotification = (
+  payload: WinNotifications | undefined,
+): PayloadAction => ({
+  type: SET_IS_WIN_NOTIFICATION,
+  payload,
+})
+
+export const setIsWinTimer = (
+  payload: Timeout | undefined,
+): PayloadAction => ({
+  type: SET_IS_WIN_TIMER,
+  payload,
+});
+
 // Middleware
+export const notifyAboutWin: ActionCreator<
+ThunkAction<void, RootState, void, PayloadAction>
+> = (
+  isWin: boolean
+) => (
+  dispatch: Dispatch
+): void => {
+  let winNotification = '';
+
+  switch (isWin) {
+    case true:
+      winNotification = WinNotifications.Win;
+      break;
+    case false:
+      winNotification = WinNotifications.Loose;
+      break;
+    default:
+      throw new TypeError(`
+        Cannot notify about win \
+        status with ${isWin} value
+      `);
+  }
+
+  dispatch(setIsWinNotification(
+    winNotification as WinNotifications
+  ));
+
+  const winTimer = setTimeout(() => {
+    dispatch(setIsWinNotification(undefined));
+  }, 20000);
+  dispatch(setIsWinTimer(winTimer))
+}
+
 export const notifyAboutMatch: ActionCreator<
 ThunkAction<void, RootState, void, PayloadAction>
 > = (
@@ -108,9 +190,10 @@ ThunkAction<void, RootState, void, PayloadAction>
     matchNotification as MatchNotifications,
   ));
   // TODO: rewrite on sagas
-  setTimeout(() => {
+  const matchTimer = setTimeout(() => {
     dispatch(setIsMatchNotification(undefined));
-  }, 2000);
+  }, 1500);
+  dispatch(setIsMatchTimer(matchTimer))
 };
 
 export const cancelMatchNotification: ActionCreator<
@@ -119,11 +202,28 @@ ThunkAction<void, RootState, void, PayloadAction>
   dispatch: Dispatch,
   getState: GetState
 ): void => {
-  const isMatchNotification =
-    selectIsMatchNotification(getState());
+  const isMatchTimer =
+    selectIsMatchTimer(getState())
 
-  if (typeof isMatchNotification !== 'undefined') {
+  if (typeof isMatchTimer !== 'undefined') {
+    clearTimeout(isMatchTimer)
     dispatch(setIsMatchTimer(undefined));
     dispatch(setIsMatchNotification(undefined));
+  }
+};
+
+export const cancelWinNotification: ActionCreator<
+ThunkAction<void, RootState, void, PayloadAction>
+> = () => (
+  dispatch: Dispatch,
+  getState: GetState
+): void => {
+  const isWinTimer =
+    selectIsWinTimer(getState());
+
+  if (typeof isWinTimer !== 'undefined') {
+    clearTimeout(isWinTimer);
+    dispatch(setIsWinTimer(undefined));
+    dispatch(setIsWinNotification(undefined));
   }
 };
