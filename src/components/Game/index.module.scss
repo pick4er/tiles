@@ -10,8 +10,23 @@
     font-size: 14px;
   }
 
-  .actions {
+  form {
     margin-top: 20px;
+    display: flex;
+    flex-flow: column;
+
+    label + label {
+      margin-top: 5px;
+    }
+
+    input {
+      max-width: 100px;
+      margin-left: 5px;
+    }
+
+    button[type="submit"] {
+      margin-top: 10px;
+    }
   }
 }
 

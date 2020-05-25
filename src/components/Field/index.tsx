@@ -38,28 +38,30 @@ function Field(props: Props) {
 
   return (
     <table className={css.field}>
-      {tiles.map((tilesRow, row) => (
-        <tr key={row}>
-          {tilesRow.map(({ id, isOpen }) => (
-            <td key={id}>
-              <Tile
-                id={id}
-                isOpen={isOpen}
-                onClick={openTile}
-                className={cx({
-                  [css.quessed]: isOpen
-                    && idsToMatch.indexOf(id) === -1
-                })}
-              >
-                <div className={cx({
-                  [values[id] as TileValue]: true,
-                  [css.value]: true,
-                })} />
-              </Tile>
-            </td>
-          ))}
-        </tr>
-      ))}
+      <tbody>
+        {tiles.map((tilesRow, row) => (
+          <tr key={row}>
+            {tilesRow.map(({ id, isOpen }) => (
+              <td key={id}>
+                <Tile
+                  id={id}
+                  isOpen={isOpen}
+                  onClick={openTile}
+                  className={cx({
+                    [css.quessed]: isOpen
+                      && idsToMatch.indexOf(id) === -1
+                  })}
+                >
+                  <div className={cx({
+                    [values[id] as TileValue]: true,
+                    [css.value]: true,
+                  })} />
+                </Tile>
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
     </table>
   )
 }

@@ -370,9 +370,13 @@ export const openTile: ActionCreator<
 
 export const initField: ActionCreator<
   ThunkAction<void, RootState, void, PayloadAction>
-> = (values: TileValue[]) => dispatch => {
-  dispatch(setHeight(4))
-  dispatch(setWidth(4))
+> = (
+  values: TileValue[],
+  width?: number,
+  height?: number
+) => dispatch => {
+  dispatch(setHeight(width || 4))
+  dispatch(setWidth(height || 4))
   dispatch(initTiles())
   dispatch(initValuesToIds(values))
   dispatch(mixTiles())
@@ -380,9 +384,13 @@ export const initField: ActionCreator<
 
 export const startNewGame: ActionCreator<
   ThunkAction<void, RootState, void, PayloadAction>
-> = (values: TileValue[]) => dispatch => {
+> = (
+  values: TileValue[],
+  width?: number,
+  height?: number
+) => dispatch => {
   dispatch(cancelMatchNotification())
   dispatch(setRound(1))
   dispatch(resetState())
-  dispatch(initField(values))
+  dispatch(initField(values, width, height))
 }

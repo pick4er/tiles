@@ -1,4 +1,5 @@
 import type { ThunkDispatch } from 'redux-thunk';
+import type { SyntheticEvent } from 'react';
 import type { Action } from 'redux';
 import type { TileValue } from 'types';
 import type { RootState } from 'flux/types';
@@ -24,8 +25,12 @@ interface Props {
   round: number;
   tilesLeft?: number;
   notification?: MatchNotifications;
-  startNewGame(values: TileValue[]): void;
   initField(values: TileValue[]): void;
+  startNewGame(
+    values: TileValue[],
+    width?: number,
+    height?: number
+  ): void;
 }
 
 function parseNotification(
@@ -59,7 +64,19 @@ function Game(props: Props) {
     initField(defaultValues)
   }, [initField])
 
-  const onStartNewGame = () => startNewGame(defaultValues)
+  const onStartNewGame = ($event: SyntheticEvent) => {
+    $event.preventDefault()
+    const target = $event.target as typeof $event.target & {
+      width: { value: string };
+      height: { value: string };
+    };
+
+    startNewGame(
+      defaultValues,
+      parseInt(target.width.value, 10),
+      parseInt(target.height.value, 10)
+    )
+  }
 
   return (
     <div className={css.game}>
@@ -74,12 +91,42 @@ function Game(props: Props) {
           <span>{ parseNotification(notification) }</span>          
         )}
       </h5>
+
       <Field />
-      <div className={css.actions}>
-        <button type="button" onClick={onStartNewGame}>
+
+      <form
+        name="newGame"
+        onSubmit={onStartNewGame}
+      >
+        <label>
+          Width (from 1 to 10):
+          <input
+            name="width"
+            placeholder="width"
+            type="number"
+            defaultValue={4}
+            autoComplete="off"
+            min={1}
+            max={10}
+          />
+        </label>
+
+        <label>
+          Height (from 1 to 10):
+          <input
+            name="height"
+            placeholder="height"
+            type="number"
+            defaultValue={4}
+            autoComplete="off"
+            min={1}
+            max={10}
+          />
+        </label>
+        <button type="submit">
           Start again
         </button>
-      </div>
+      </form>
     </div>
   )
 }
@@ -94,8 +141,11 @@ const mapDispatchToProps = (
 ) => ({
   initField: (values: TileValue[]) =>
     dispatch(initFieldAction(values)),
-  startNewGame: (values: TileValue[]) =>
-    dispatch(startNewGameAction(values))
+  startNewGame: (
+    values: TileValue[],
+    width?: number,
+    height?: number
+  ) => dispatch(startNewGameAction(values, width, height))
 })
 
 export default connect(
