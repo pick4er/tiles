@@ -1,27 +1,48 @@
 @import 'styles';
 
 .game {
-  display: flex;
-  flex-flow: column nowrap;
-  align-items: center;
+  @include alignChildrenCenter();
+
+  .info {
+    max-width: 500px;
+
+    & > * {
+      text-align: center;
+    }
+  }
 
   h5 {
-    height: 14px;
+    height: 16px;
     font-size: 14px;
   }
 
+  .hidden {
+    visibility: hidden;
+  }
+
   form {
+    max-width: 500px;
     margin-top: 20px;
-    display: flex;
-    flex-flow: column;
+
+    @include alignChildrenCenter();
+
+    & > * {
+      display: block;
+    }
+
+    label {
+      div {
+        text-align: center;
+
+        input {
+          max-width: 100px;
+          margin-left: 5px;
+        }
+      }
+    }
 
     label + label {
       margin-top: 5px;
-    }
-
-    input {
-      max-width: 100px;
-      margin-left: 5px;
     }
 
     button[type="submit"] {

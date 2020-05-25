@@ -1,0 +1,7 @@
+
+@mixin alignChildrenCenter() {
+  & > * {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}

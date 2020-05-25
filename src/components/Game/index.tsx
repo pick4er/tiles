@@ -6,6 +6,7 @@ import type { RootState } from 'flux/types';
 
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
+import cx from 'classnames';
 
 import Field from 'components/Field';
 import { MatchNotifications } from 'flux/types';
@@ -34,7 +35,7 @@ interface Props {
 }
 
 function parseNotification(
-  notification: MatchNotifications,
+  notification: MatchNotifications | undefined,
 ): string | undefined {
   if (notification === MatchNotifications.Match) {
     return 'You guessed!';
@@ -80,17 +81,19 @@ function Game(props: Props): ReactElement {
 
   return (
     <div className={css.game}>
-      <h3>Round { round }</h3>
-      <h5>
-        {tilesLeft && (
-          <span>
-            { tilesLeft } tiles left to guess
-          </span>
-        )}
-        {notification && (
-          <span>{ parseNotification(notification) }</span>
-        )}
-      </h5>
+      <div className={css.info}>
+        <h3>Round { round }</h3>
+        <h5 className={cx({
+          [css.hidden]: !tilesLeft
+        })}>
+          { tilesLeft } tiles left to guess
+        </h5>
+        <h5 className={cx({
+          [css.hidden]: !notification 
+        })}>
+          { parseNotification(notification) }
+        </h5>
+      </div>
 
       <Field />
 
@@ -99,32 +102,36 @@ function Game(props: Props): ReactElement {
         onSubmit={onStartNewGame}
       >
         <label htmlFor="width">
-          Width (from 1 to 10):
-          <input
-            name="width"
-            placeholder="width"
-            type="number"
-            defaultValue={4}
-            autoComplete="off"
-            min={1}
-            max={10}
-          />
+          <div>
+            Width (from 1 to 10):
+            <input
+              name="width"
+              placeholder="width"
+              type="number"
+              defaultValue={4}
+              autoComplete="off"
+              min={1}
+              max={10}
+            />
+          </div>
         </label>
 
         <label htmlFor="height">
-          Height (from 1 to 10):
-          <input
-            name="height"
-            placeholder="height"
-            type="number"
-            defaultValue={4}
-            autoComplete="off"
-            min={1}
-            max={10}
-          />
+          <div>
+            Height (from 1 to 10):
+            <input
+              name="height"
+              placeholder="height"
+              type="number"
+              defaultValue={4}
+              autoComplete="off"
+              min={1}
+              max={10}
+            />
+          </div>
         </label>
         <button type="submit">
-          Start again
+          Try again
         </button>
       </form>
     </div>
