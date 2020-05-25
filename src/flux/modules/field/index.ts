@@ -345,6 +345,7 @@ export const openTile: ActionCreator<
 
   dispatch(cancelMatchNotification())
   dispatch(setIdsToMatch(nextIdsToMatch))
+
   const isMatch = selectIsMatch(getState())
   if (isMatch === false) {
     // close all selected tiles for this round
@@ -355,16 +356,19 @@ export const openTile: ActionCreator<
       tileToClose.isOpen = false
     })
 
+    // nevertheless, open clicked tile
+    tile.isOpen = true
+    dispatch(setIdsToMatch([tileId]))
+
     dispatch(setTiles(tiles))
     dispatch(updateRound())
-  } else {
-    dispatch(setTiles(tiles))
-  }
-
-  // typeof undefined is not a full match
-  if (typeof isMatch === 'boolean') {
-    dispatch(setIdsToMatch([]))
     dispatch(notifyAboutMatch(isMatch))
+  } else if (isMatch === true) {
+    dispatch(setIdsToMatch([]))
+    dispatch(setTiles(tiles))
+    dispatch(notifyAboutMatch(isMatch))
+  } else if (typeof isMatch === 'undefined') {
+    dispatch(setTiles(tiles))
   }
 }
 
