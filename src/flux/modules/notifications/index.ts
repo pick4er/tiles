@@ -76,7 +76,7 @@ ThunkAction<void, RootState, void, PayloadAction>
   dispatch,
   getState,
 ) => {
-  let matchNotification: string = '';
+  let matchNotification = '';
 
   switch (isMatch) {
     case true:

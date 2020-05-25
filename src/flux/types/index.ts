@@ -4,7 +4,7 @@ import { rootReducer } from 'flux';
 export type RootState = ReturnType<typeof rootReducer>;
 
 export interface PayloadAction extends Action<string> {
-  payload?: any;
+  payload?: string | number | Record<string, unknown>;
 }
 
 export enum MatchNotifications {

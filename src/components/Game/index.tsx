@@ -43,6 +43,8 @@ function parseNotification(
   if (notification === MatchNotifications.NotMatch) {
     return 'Fail. Try again, please';
   }
+
+  return undefined;
 }
 
 const defaultValues = [

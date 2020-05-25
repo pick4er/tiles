@@ -148,11 +148,11 @@ export const selectIdsToValues = createSelector(
   (valuesToIds): Record<TileId, TileValue> => {
     const idsToValues: Record<TileId, TileValue> = {};
 
-    for (const value of Object.keys(valuesToIds)) {
-      for (const identifier of valuesToIds[value]) {
-        idsToValues[identifier] = value as TileValue;
-      }
-    }
+    Object.keys(valuesToIds).forEach((value: TileValue) => (valuesToIds[value] as TileId[]).forEach(
+      (identifier: TileId) => {
+        idsToValues[identifier] = value;
+      },
+    ));
 
     return idsToValues;
   },

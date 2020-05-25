@@ -1,7 +1,15 @@
+
 module.exports = {
-  extends: ['airbnb-typescript/base'],
+  plugins: ["@typescript-eslint"],
+  extends: [
+    "airbnb-typescript",
+    "plugin:@typescript-eslint/recommended",
+    "prettier/@typescript-eslint",
+    "prettier/react",
+    "prettier"
+  ],
   parserOptions: {
-    project: './tsconfig.json',
+    project: "./tsconfig.json",
   },
   env: {
     browser: true,
@@ -11,6 +19,11 @@ module.exports = {
     node: true
   },
   rules: {
-    "max-len": ["error", { "code": 60 }]
+    "max-len": ["error", { "code": 60 }],
+    "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
+    "import/prefer-default-export": "off",
+    "react/destructuring-assignment": "off",
+    // airnb-typescript is stale to support eslint https://github.com/typescript-eslint/typescript-eslint/issues/2077
+    "@typescript-eslint/camelcase": "off",
   }
 }
