@@ -15,7 +15,7 @@ interface Props {
   children?: ReactNode;
 }
 
-export default function Tile(props: Props) {
+export default function Tile(props: Props): ReactNode {
   const {
     id,
     style,

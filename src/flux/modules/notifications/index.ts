@@ -1,6 +1,8 @@
 import type { ActionCreator } from 'redux';
 import type { ThunkAction } from 'redux-thunk';
 import type {
+  GetState,
+  Dispatch,
   RootState,
   PayloadAction,
 } from 'flux/types';
@@ -10,11 +12,13 @@ import { MatchNotifications } from 'flux/types';
 
 interface State {
   isMatchNotification?: MatchNotifications;
-  isMatchTimer?: any;
+  isMatchTimer?: number | string;
 }
 
-const SET_IS_MATCH_NOTIFICATION = 'NOTIFICATIONS/SET_IS_MATCH_NOTIFICATION';
-const SET_IS_MATCH_TIMER = 'NOTIFICATIONS/SET_IS_MATCH_TIMER';
+const SET_IS_MATCH_NOTIFICATION =
+  'NOTIFICATIONS/SET_IS_MATCH_NOTIFICATION';
+const SET_IS_MATCH_TIMER =
+  'NOTIFICATIONS/SET_IS_MATCH_TIMER';
 
 const initialState: State = {
   isMatchNotification: undefined,
@@ -24,7 +28,7 @@ const initialState: State = {
 export default function reducer(
   state: State = initialState,
   { type, payload }: PayloadAction,
-) {
+): State {
   switch (type) {
     case SET_IS_MATCH_NOTIFICATION:
       return {
@@ -42,11 +46,14 @@ export default function reducer(
 }
 
 // Selector
-const notificationsModule = (state: RootState) => state.notifications;
+const notificationsModule = (state: RootState) =>
+  state.notifications;
 
 export const selectIsMatchNotification = createSelector(
   notificationsModule,
-  ({ isMatchNotification }): MatchNotifications | undefined => isMatchNotification,
+  /* eslint-disable-next-line max-len */
+  ({ isMatchNotification }): MatchNotifications | undefined =>
+    isMatchNotification,
 );
 
 export const selectIsMatchTimer = createSelector(
@@ -63,7 +70,7 @@ export const setIsMatchNotification = (
 });
 
 export const setIsMatchTimer = (
-  payload: any | undefined,
+  payload: string | number | undefined,
 ): PayloadAction => ({
   type: SET_IS_MATCH_TIMER,
   payload,
@@ -72,10 +79,11 @@ export const setIsMatchTimer = (
 // Middleware
 export const notifyAboutMatch: ActionCreator<
 ThunkAction<void, RootState, void, PayloadAction>
-> = (isMatch: boolean | undefined) => (
-  dispatch,
-  getState,
-) => {
+> = (
+  isMatch: boolean | undefined
+) => (
+  dispatch: Dispatch
+): void => {
   let matchNotification = '';
 
   switch (isMatch) {
@@ -86,10 +94,14 @@ ThunkAction<void, RootState, void, PayloadAction>
       matchNotification = MatchNotifications.NotMatch;
       break;
     case undefined:
-      matchNotification = MatchNotifications.PartiallyMatch;
+      matchNotification =
+        MatchNotifications.PartiallyMatch;
       break;
     default:
-      throw new TypeError(`Cannot notify about match status with ${isMatch} value`);
+      throw new TypeError(`
+        Cannot notify about match \
+        status with ${isMatch} value
+      `);
   }
 
   dispatch(setIsMatchNotification(
@@ -103,12 +115,15 @@ ThunkAction<void, RootState, void, PayloadAction>
 
 export const cancelMatchNotification: ActionCreator<
 ThunkAction<void, RootState, void, PayloadAction>
-> = () => (dispatch, getState) => {
-  const isMatchNotification = selectIsMatchNotification(getState());
-  if (typeof isMatchNotification === 'undefined') {
-    return;
-  }
+> = () => (
+  dispatch: Dispatch,
+  getState: GetState
+): void => {
+  const isMatchNotification =
+    selectIsMatchNotification(getState());
 
-  dispatch(setIsMatchTimer(undefined));
-  dispatch(setIsMatchNotification(undefined));
+  if (typeof isMatchNotification !== 'undefined') {
+    dispatch(setIsMatchTimer(undefined));
+    dispatch(setIsMatchNotification(undefined));
+  }
 };

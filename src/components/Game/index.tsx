@@ -1,5 +1,5 @@
+import type { SyntheticEvent, ReactNode } from 'react';
 import type { ThunkDispatch } from 'redux-thunk';
-import type { SyntheticEvent } from 'react';
 import type { Action } from 'redux';
 import type { TileValue } from 'types';
 import type { RootState } from 'flux/types';
@@ -51,7 +51,7 @@ const defaultValues = [
   css.red, css.green, css.yellow,
   css.purple, css.grey, css.azure,
 ];
-function Game(props: Props) {
+function Game(props: Props): ReactNode {
   const {
     round,
     initField,
@@ -98,7 +98,7 @@ function Game(props: Props) {
         name="newGame"
         onSubmit={onStartNewGame}
       >
-        <label>
+        <label htmlFor="width">
           Width (from 1 to 10):
           <input
             name="width"
@@ -111,7 +111,7 @@ function Game(props: Props) {
           />
         </label>
 
-        <label>
+        <label htmlFor="height">
           Height (from 1 to 10):
           <input
             name="height"

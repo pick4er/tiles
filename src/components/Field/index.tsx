@@ -39,8 +39,8 @@ function Field(props: Props) {
   return (
     <table className={css.field}>
       <tbody>
-        {tiles.map((tilesRow, row) => (
-          <tr key={row}>
+        {tiles.map(tilesRow => (
+          <tr>
             {tilesRow.map(({ id, isOpen }) => (
               <td key={id}>
                 <Tile

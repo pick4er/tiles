@@ -1,16 +1,16 @@
 import type { ActionCreator } from 'redux';
 import type { ThunkAction } from 'redux-thunk';
-import type { RootState, PayloadAction } from 'flux/types';
+import type {
+  GetState,
+  Dispatch,
+  RootState,
+  PayloadAction,
+} from 'flux/types';
 
 import { createSelector } from 'reselect';
 
 interface State {
   round: number;
-}
-
-interface Action {
-  type: string;
-  payload?: any;
 }
 
 // Actions
@@ -23,8 +23,8 @@ const initialState: State = {
 // Reducer
 export default function reducer(
   state: State = initialState,
-  { type, payload }: Action,
-) {
+  { type, payload }: PayloadAction,
+): State {
   switch (type) {
     case SET_ROUND:
       return {
@@ -56,6 +56,9 @@ export const setRound = (
 export const updateRound: ActionCreator<
 // types: return, root state, extra args, action
 ThunkAction<void, RootState, void, PayloadAction>
-> = () => (dispatch, getState) => {
+> = () => (
+  dispatch: Dispatch,
+  getState: GetState
+): void => {
   dispatch(setRound(selectRound(getState()) + 1));
 };
