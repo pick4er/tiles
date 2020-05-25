@@ -13,7 +13,7 @@ import type {
 } from 'types';
 
 import { createSelector } from 'reselect';
-import { compareArrays } from 'helpers';
+import { compareArrays, mixArray } from 'helpers';
 import {
   setRound,
   updateRound,
@@ -372,15 +372,7 @@ ThunkAction<void, RootState, void, PayloadAction>
   const tiles: OpenableTile[] = 
     JSON.parse(JSON.stringify(selectTiles(getState())));
 
-  for (let i = tiles.length - 1; i > 0; i--) {
-    const j = Math.floor(
-      Math.random() * (i + 1),
-    ) as number;
-
-    [tiles[i], tiles[j]] = [tiles[j], tiles[i]];
-  }
-
-  dispatch(setTiles(tiles));
+  dispatch(setTiles(mixArray<OpenableTile>(tiles)));
 };
 
 export const openTile: ActionCreator<
@@ -455,7 +447,7 @@ ThunkAction<void, RootState, void, PayloadAction>
   dispatch(setHeight(width || 4));
   dispatch(setWidth(height || 4));
   dispatch(initTiles());
-  dispatch(initValuesToIds(values));
+  dispatch(initValuesToIds(mixArray<string>(values)));
   dispatch(mixTiles());
 };
 

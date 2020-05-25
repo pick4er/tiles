@@ -13,7 +13,7 @@ interface State {
   round: number;
 }
 
-export const GAME_OVER_ROUNDS_THRESHOLD = 5;
+export const GAME_OVER_ROUNDS_THRESHOLD = 30;
 
 // Actions
 const SET_ROUND = 'GAME/SET_ROUND';

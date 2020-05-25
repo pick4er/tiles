@@ -68,8 +68,19 @@ function parseWinNotification(
 }
 
 const defaultValues = [
-  css.red, css.green, css.yellow,
-  css.purple, css.grey, css.azure,
+  css.vinousRed,
+  css.grassGreen,
+  css.azure,
+  css.tulipPurple,
+  css.grey,
+  css.yellow,
+  css.pink,
+  css.purple,
+  css.solidRed,
+  css.babyBlue,
+  css.brown,
+  css.avocadoGreen,
+  css.oceanBlue,
 ];
 function Game(props: Props): ReactElement {
   const {
