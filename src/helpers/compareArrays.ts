@@ -6,13 +6,13 @@
 /* eslint-disable-next-line max-len */
 export default <T extends (string | number)>(arr1: T[], arr2: T[]): boolean | undefined => {
   const differentVal: T | undefined =
-    arr1.find((val1: T) => {
+    arr1.filter((val1: T) => {
       if (arr2.indexOf(val1) === -1) {
         return true;
       }
 
       return false;
-    })
+    })[0];
 
   if (typeof differentVal !== 'undefined') {
     return false;

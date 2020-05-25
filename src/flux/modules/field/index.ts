@@ -350,9 +350,9 @@ ThunkAction<void, RootState, void, PayloadAction>
   const tiles = JSON.parse(JSON.stringify(
     selectTiles(getState()),
   ));
-  const tile = tiles.find(
+  const tile = tiles.filter(
     ({ id }: OpenableTile) => id === tileId,
-  ) as OpenableTile;
+  )[0] as OpenableTile;
   if (tile.isOpen) {
     return;
   }
@@ -368,9 +368,9 @@ ThunkAction<void, RootState, void, PayloadAction>
   if (isMatch === false) {
     // close all selected tiles for this round
     nextIdsToMatch.forEach((_id) => {
-      const tileToClose = tiles.find(
+      const tileToClose = tiles.filter(
         ({ id }: OpenableTile) => id === _id,
-      );
+      )[0];
       tileToClose.isOpen = false;
     });
 
