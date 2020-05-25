@@ -1,4 +1,8 @@
-import type { ReactNode, CSSProperties } from 'react';
+import type {
+  ReactNode,
+  ReactElement,
+  CSSProperties,
+} from 'react';
 import type { TileId } from 'types';
 
 import React from 'react';
@@ -15,7 +19,7 @@ interface Props {
   children?: ReactNode;
 }
 
-export default function Tile(props: Props): ReactNode {
+export default function Tile(props: Props): ReactElement {
   const {
     id,
     style,

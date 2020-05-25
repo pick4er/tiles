@@ -1,6 +1,6 @@
-import type { ReactNode } from 'react';
+import type { ReactElement } from 'react';
 
 import React from 'react';
 import Game from 'components/Game';
 
-export default (): ReactNode => <Game />;
+export default (): ReactElement => <Game />;

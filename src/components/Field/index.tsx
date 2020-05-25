@@ -39,8 +39,9 @@ function Field(props: Props) {
   return (
     <table className={css.field}>
       <tbody>
-        {tiles.map(tilesRow => (
-          <tr>
+        {tiles.map((tilesRow, row) => (
+          /* eslint-disable-next-line react/no-array-index-key */
+          <tr key={row}>
             {tilesRow.map(({ id, isOpen }) => (
               <td key={id}>
                 <Tile

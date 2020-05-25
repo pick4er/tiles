@@ -19,11 +19,12 @@ module.exports = {
     node: true
   },
   rules: {
-    "max-len": ["error", { "code": 60 }],
+    "max-len": ["error", { "code": 60, "comments": 100 }],
     "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
     "import/prefer-default-export": "off",
     "react/destructuring-assignment": "off",
     // airnb-typescript is stale to support eslint https://github.com/typescript-eslint/typescript-eslint/issues/2077
     "@typescript-eslint/camelcase": "off",
+    "@typescript-eslint/no-explicit-any": "off"
   }
 }

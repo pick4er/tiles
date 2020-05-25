@@ -1,11 +1,12 @@
 import type { Action } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
+
 import { rootReducer } from 'flux';
 
 export type RootState = ReturnType<typeof rootReducer>;
 
 export interface PayloadAction extends Action<string> {
-  payload?: string | number | Record<string, unknown>;
+  payload?: any;
 }
 
 export interface GetState {

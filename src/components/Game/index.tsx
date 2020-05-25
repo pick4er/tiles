@@ -1,4 +1,4 @@
-import type { SyntheticEvent, ReactNode } from 'react';
+import type { SyntheticEvent, ReactElement } from 'react';
 import type { ThunkDispatch } from 'redux-thunk';
 import type { Action } from 'redux';
 import type { TileValue } from 'types';
@@ -51,7 +51,7 @@ const defaultValues = [
   css.red, css.green, css.yellow,
   css.purple, css.grey, css.azure,
 ];
-function Game(props: Props): ReactNode {
+function Game(props: Props): ReactElement {
   const {
     round,
     initField,
